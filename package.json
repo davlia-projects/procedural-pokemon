@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "dat-gui": "^0.5.0",
+    "express": "^4.15.2",
     "gl-matrix": "^2.3.2",
     "stats-js": "^1.0.0-alpha1",
     "three": "^0.82.1",

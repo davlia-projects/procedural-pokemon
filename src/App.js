@@ -3,7 +3,7 @@ import Player from './Player.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
-const ASSETS = '../assets';
+const ASSETS = 'assets';
 const SERVER_URL = 'ws://localhost:8000/play';
 
 export default class App {

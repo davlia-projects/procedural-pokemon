@@ -20,13 +20,13 @@ export default class App {
   setup() {
     this.grid = new Grid(10);
     this.player = new Player();
-    this.re = new RenderEngine(this.ctx, this.sprites);
+    this.re = new RenderEngine(this.ctx, this.sprite);
     this.re.renderGrid(this.grid);
   }
 
   onLoad() {
     document.body.appendChild(this.canvas);
-    this.sprites = new Sprite(this.spriteSrc, () => {
+    this.sprite = new Sprite(this.spriteSrc, () => {
       this.setup();
     });
   }

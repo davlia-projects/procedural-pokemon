@@ -1,6 +1,5 @@
 import Grid from './Grid.js'
 import Player from './Player.js'
-import Viewport from './Viewport.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
@@ -11,19 +10,20 @@ export default class App {
   constructor () {
     this.canvas = document.createElement('canvas');
     // Aspect ratio of 3:2
-    this.canvas.width = 960;
-    this.canvas.height = 640;
-    this.ctx = this.canvas.getContext('2d');
-    let spriteSrc = `${ASSETS}/sprites.png`;
+    // this.canvas.width = 960;
+    // this.canvas.height = 640;
+    this.canvas.width = 480;
+    this.canvas.height = 320;
+    this.spriteSrc = `${ASSETS}/sprites.png`;
   }
 
   setup() {
-    this.setupWebsocket();
+    // this.setupWebsocket();
     this.setupEventListeners();
-    this.grid = new Grid(10);
-    this.player = new Player();
-    this.re = new RenderEngine(this.ctx, this.sprite);
-    this.re.renderGrid(this.grid);
+    this.grid = new Grid(100);
+    this.player = new Player(this.grid);
+    this.re = new RenderEngine(this.canvas, this.sprite, this.grid, this.player);
+    this.re.render();
   }
 
   setupWebsocket() {
@@ -41,21 +41,22 @@ export default class App {
   }
 
   setupEventListeners() {
-    this.canvas.addEventListener('keypress', () => {
-      switch (code) {
+    window.addEventListener('keydown', (event) => {
+      switch (event.keyCode) {
         case 37:
           this.player.move("left");
           break;
         case 38:
-          this.player.move("up");
+          this.player.move("down");
           break;
         case 39:
           this.player.move("right");
           break;
         case 40:
-          this.player.move("down");
+          this.player.move("up");
           break;
       }
+      this.re.render();
     });
   }
 

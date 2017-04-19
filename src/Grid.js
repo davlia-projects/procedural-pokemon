@@ -26,7 +26,5 @@ export default class Grid {
   }
 
   generateWildPokemonAreas() {
-
   }
-
 }

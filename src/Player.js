@@ -1,28 +1,36 @@
+import Viewport from './Viewport.js'
+
 export default class Player {
-  constructor(viewport) {
-    this.pos = {x: 0, y: 0};
-    this.viewport = viewport;
+  constructor(grid) {
+    this.pos = {x: 10, y: 10};
+    this.grid = grid;
+    this.viewport = new Viewport(grid, this.pos);
   }
 
 
   move(dir) {
     switch(dir) {
       case 'right':
-        this.pos.x += 1;
-        this.viewport.updateFocus(this.pos.x, this.pos.y);
+        if (this.pos.x + 1 < this.grid.size) {
+          this.pos.x += 1;
+        }
         break;
       case 'left':
-        this.pos.x -= 1;
-        this.viewport.updateFocus(this.pos.x, this.pos.y);
+        if (this.pos.x - 1 >= 0) {
+          this.pos.x -= 1;
+        }
         break;
       case 'up':
-        this.pos.y += 1;
-        this.viewport.updateFocus(this.pos.x, this.pos.y);
+        if (this.pos.y + 1 < this.grid.size) {
+          this.pos.y += 1;
+        }
         break;
       case 'down':
-        this.pos.y -= 1;
-        this.viewport.updateFocus(this.pos.x, this.pos.y);
+        if (this.pos.y - 1 >= 0) {
+          this.pos.y -= 1;
+        }
         break;
     }
+    this.viewport.updateFocus(this.pos.x, this.pos.y);
   }
 }

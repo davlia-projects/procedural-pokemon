@@ -15,12 +15,29 @@ export default class App {
     this.ctx = this.canvas.getContext('2d');
 
     let spriteSrc = `${ASSETS}/sprites.png`;
-
-
   }
 
   setup() {
-    
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    this.canvas.addEventListener('keypress', () => {
+      switch (code) {
+        case 37:
+          this.player.move("left");
+          break;
+        case 38:
+          this.player.move("up");
+          break;
+        case 39:
+          this.player.move("right");
+          break;
+        case 40:
+          this.player.move("down");
+          break;
+      }
+    });
   }
 
   onLoad() {

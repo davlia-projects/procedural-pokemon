@@ -90,7 +90,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var ASSETS = 'assets';
+	var ASSETS = './assets';
 	var SERVER_URL = 'ws://localhost:8000/play';
 	
 	var App = function () {

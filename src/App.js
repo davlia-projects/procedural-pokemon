@@ -14,14 +14,33 @@ export default class App {
     this.canvas.height = 640;
     this.ctx = this.canvas.getContext('2d');
     this.spriteSrc = `${ASSETS}/sprites.png`;
-
   }
 
   setup() {
+    this.setupEventListeners();
     this.grid = new Grid(10);
     this.player = new Player();
     this.re = new RenderEngine(this.ctx, this.sprite);
     this.re.renderGrid(this.grid);
+  }
+
+  setupEventListeners() {
+    this.canvas.addEventListener('keypress', () => {
+      switch (code) {
+        case 37:
+          this.player.move("left");
+          break;
+        case 38:
+          this.player.move("up");
+          break;
+        case 39:
+          this.player.move("right");
+          break;
+        case 40:
+          this.player.move("down");
+          break;
+      }
+    });
   }
 
   onLoad() {

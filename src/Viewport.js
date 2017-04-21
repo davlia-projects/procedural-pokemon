@@ -2,7 +2,7 @@ import Tile from './Tile.js'
 const PLAYER = 'P';
 
 export default class Viewport {
-  constructor(grid, pos) {
+  constructor(world, pos) {
     this.width = 15;
     this.height = 11;
     this.halfWidth = Math.floor(this.width / 2);
@@ -13,7 +13,7 @@ export default class Viewport {
       this.cells[i] = new Array(this.height);
     }
     this.focus = {x: pos.x, y: pos.y};
-    this.grid = grid;
+    this.world = world;
     this._sampleTiles();
   }
 
@@ -28,7 +28,7 @@ export default class Viewport {
       for (let j = 0; j < this.height; j++) {
         let x = i + this.focus.x - this.halfWidth;
         let y = j + this.focus.y - this.halfHeight;
-        this.cells[i][j] = this.grid.getTile(x, y);
+        this.cells[i][j] = this.world.getTile(x, y);
       }
     }
     this.cells[Math.floor(this.width / 2)][Math.floor(this.height / 2)] = new Tile(PLAYER);

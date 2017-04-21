@@ -1,17 +1,17 @@
 import Viewport from './Viewport.js'
 
 export default class Player {
-  constructor(grid) {
+  constructor(world) {
     this.pos = {x: 10, y: 10};
-    this.grid = grid;
-    this.viewport = new Viewport(grid, this.pos);
+    this.world = world;
+    this.viewport = new Viewport(world, this.pos);
   }
 
 
   move(dir) {
     switch(dir) {
       case 'right':
-        if (this.pos.x + 1 < this.grid.size) {
+        if (this.pos.x + 1 < this.world.size) {
           this.pos.x += 1;
         }
         break;
@@ -21,7 +21,7 @@ export default class Player {
         }
         break;
       case 'up':
-        if (this.pos.y + 1 < this.grid.size) {
+        if (this.pos.y + 1 < this.world.size) {
           this.pos.y += 1;
         }
         break;

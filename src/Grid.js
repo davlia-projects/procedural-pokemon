@@ -2,7 +2,7 @@ import Tile from './Tile.js'
 
 const BLACK = new Tile('0');
 
-export default class Grid {
+export default class World {
   constructor(size) {
   	this.size = size;
   	this.grid = new Array(this.size);

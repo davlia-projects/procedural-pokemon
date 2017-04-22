@@ -17,9 +17,10 @@ export default class RenderEngine {
   }
 
   render() {
-    for (let i = 0; i < this.viewport.width; i++) {
-      for (let j = 0; j < this.viewport.height; j++) {
-        this.drawTile(this.viewport.cells[i][j].symbol, i, j);
+    let { width, height, cells } = this.viewport;
+    for (let i = 0; i < width; i++) {
+      for (let j = 0; j < height; j++) {
+        this.drawTile(cells[i][j].symbol, i, j);
       }
     }
   }

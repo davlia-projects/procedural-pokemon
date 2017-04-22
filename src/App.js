@@ -5,39 +5,28 @@ import Sprite from './Sprite.js'
 
 const ASSETS = './assets';
 const SERVER_URL = 'ws://localhost:8000/play';
+const RESOLUTION_SCALE = 3;
 
 export default class App {
   constructor () {
     this.canvas = document.createElement('canvas');
     // Aspect ratio of 3:2
-    // this.canvas.width = 960;
-    // this.canvas.height = 640;
-    this.canvas.width = 480;
-    this.canvas.height = 320;
+    this.canvas.width = 240 * RESOLUTION_SCALE;
+    this.canvas.height = 160 * RESOLUTION_SCALE;
     this.spriteSrc = `${ASSETS}/sprites.png`;
+    this.clientID = -1; // default null value for client ID
+
+    // TODO: remove this debug statement
+    window.x = this;
   }
 
   setup() {
-    // this.setupWebsocket();
+    this.setupWebsocket();
     this.setupEventListeners();
     this.world = new World(100);
     this.player = new Player(this.world);
     this.re = new RenderEngine(this.canvas, this.sprite, this.world, this.player);
     this.re.render();
-  }
-
-  setupWebsocket() {
-    let ws = new WebSocket(SERVER_URL);
-    ws.onopen = () => {
-      console.log('websocket connection opened');
-      ws.send('ping');
-    }
-    ws.onmessage = (evt) => {
-      console.log(`evt received ${evt}`);
-    }
-    ws.onclose = () => {
-      console.log('websocket connection closed');
-    }
   }
 
   setupEventListeners() {
@@ -72,5 +61,36 @@ export default class App {
 
   onResize() {
 
+  }
+
+/*******
+ WebSocket Shenanigans
+ *******/
+
+  setupWebsocket() {
+    this.ws = new WebSocket(SERVER_URL);
+    this.ws.onopen = this.onWSOpen.bind(this);
+    this.ws.onmessage = this.receiveEvent.bind(this);
+  }
+
+  onWSOpen() {
+    console.log("Websocket connection with server established");
+    this.sendEvent('init', 'initializing connection and awaiting id assignment');
+  }
+
+  sendEvent(type, message) {
+    this.ws.send(JSON.stringify({
+      'type': type,
+      'message': message,
+      'sender': this.clientID
+    }));
+  }
+
+  receiveEvent(e) {
+    let { type, message, sender } = JSON.parse(e);
+    console.log(type, message, sender);
+    if (type === 'init') {
+      this.clientID = message;
+    }
   }
 }

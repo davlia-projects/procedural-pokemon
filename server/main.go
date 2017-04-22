@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Senior-Design-Kappa/sync-server/controller"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
@@ -20,14 +19,11 @@ var (
 			return true
 		},
 	}
-	c *controller.Controller
+	c = NewController()
 )
 
 func main() {
-
-	c = controller.NewController()
-	go c.Run()
-
+	go c.run()
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health", health)
@@ -46,7 +42,7 @@ func main() {
 
 // health reports 200 if services is up and running
 func health(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "OK")
+	fmt.Fprintf(w, "we healthy bois")
 }
 
 // handleConnection handles websocket requests from client
@@ -61,13 +57,5 @@ func handleConnection(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	for {
-		msgType, msg, err := conn.ReadMessage()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		fmt.Printf("%+v %+v\n", msgType, msg)
-
-	}
+	c.AddConn(conn)
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 
@@ -12,14 +11,14 @@ import (
 type InboundMessage struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`
-	Sender  int    `json:"sender"`
+	Sender  int    `json:"id"`
 }
 
 // OutboundMessage is used to marshal outgoing events
 type OutboundMessage struct {
 	Type     string `json:"type"`
-	Message  string `json:"Message"`
-	Receiver int    `json:"receiver"`
+	Message  string `json:"message"`
+	Receiver int    `json:"id"`
 }
 
 // Controller handles all ws connection events and is the driver module
@@ -49,7 +48,6 @@ func (C *Controller) handleInboundMessages() {
 		msg := <-C.ReceiveChan
 		switch msg.Type {
 		case "init":
-			fmt.Printf("%+v\n", msg)
 			C.sendMessage(
 				"init",
 				"assigning id to your bougie ass",
@@ -96,7 +94,8 @@ func (C *Controller) readFromClient(client *Client) {
 		var msg InboundMessage
 		err := client.ReadJSON(&msg)
 		if err != nil {
-			log.Printf("error in readFromClient: %+v\n", err)
+			log.Printf("Connection closed by %d\n", client.ID)
+			delete(C.Clients, client.ID)
 			return
 		}
 		// TODO: this is sort of hacky IMO? should refactor in future

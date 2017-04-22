@@ -58,12 +58,4 @@ func handleConnection(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	c.AddConn(conn)
-	// for {
-	// 	msgType, msg, err := conn.ReadMessage()
-	// 	if err != nil {
-	// 		fmt.Println(err)
-	// 		return
-	// 	}
-	// 	fmt.Printf("%s %s\n", msgType, msg)
-	// }
 }

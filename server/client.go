@@ -17,12 +17,17 @@ func NewClient(conn *websocket.Conn, id int) *Client {
 	return c
 }
 
-// ReadJSON wraps around the connection method
+// ReadJSON forwards the ReadJSON call
 func (C *Client) ReadJSON(v interface{}) error {
 	return C.Conn.ReadJSON(v)
 }
 
-// WriteJSON wraps around the connection method
+// WriteJSON forwards the WriteJSON call
 func (C *Client) WriteJSON(v interface{}) error {
 	return C.Conn.WriteJSON(v)
+}
+
+// Close forwards the Close call
+func (C *Client) Close() error {
+	return C.Conn.Close()
 }

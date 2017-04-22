@@ -74,23 +74,23 @@ export default class App {
   }
 
   onWSOpen() {
-    console.log("Websocket connection with server established");
     this.sendEvent('init', 'initializing connection and awaiting id assignment');
   }
 
   sendEvent(type, message) {
+    console.log(type, message);
     this.ws.send(JSON.stringify({
       'type': type,
       'message': message,
-      'sender': this.clientID
+      'id': this.clientID
     }));
   }
 
   receiveEvent(e) {
-    let { type, message, sender } = JSON.parse(e);
-    console.log(type, message, sender);
+    let { type, message, id } = JSON.parse(e.data);
+    console.log(type, message, id);
     if (type === 'init') {
-      this.clientID = message;
+      this.clientID = id;
     }
   }
 }

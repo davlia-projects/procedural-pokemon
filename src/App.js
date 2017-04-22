@@ -1,4 +1,4 @@
-import Grid from './Grid.js'
+import World from './World.js'
 import Player from './Player.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
@@ -20,9 +20,9 @@ export default class App {
   setup() {
     // this.setupWebsocket();
     this.setupEventListeners();
-    this.grid = new Grid(100);
-    this.player = new Player(this.grid);
-    this.re = new RenderEngine(this.canvas, this.sprite, this.grid, this.player);
+    this.world = new World(100);
+    this.player = new Player(this.world);
+    this.re = new RenderEngine(this.canvas, this.sprite, this.world, this.player);
     this.re.render();
   }
 

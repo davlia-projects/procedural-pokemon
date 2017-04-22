@@ -6,12 +6,12 @@ const TILEMAP = {
 };
 
 export default class RenderEngine {
-  constructor(canvas, sprite, grid, player) {
+  constructor(canvas, sprite, world, player) {
     // canvas is 960 x 640
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.sprite = sprite;
-    this.grid = grid;
+    this.world = world;
     this.player = player;
     this.viewport = player.viewport;
   }

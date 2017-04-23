@@ -5,11 +5,11 @@ import "github.com/gorilla/websocket"
 // Client encapsulates all player connection contexts
 type Client struct {
 	Conn *websocket.Conn
-	ID   int
+	ID   int32
 }
 
 // NewClient creates a new client
-func NewClient(conn *websocket.Conn, id int) *Client {
+func NewClient(conn *websocket.Conn, id int32) *Client {
 	c := &Client{
 		Conn: conn,
 		ID:   id,

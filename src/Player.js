@@ -1,12 +1,11 @@
 import Viewport from './Viewport.js'
 
 export default class Player {
-  constructor(world) {
-    this.pos = {x: 10, y: 10};
+  constructor(world, pos) {
+    this.pos = {x: pos.x, y: pos.y};
     this.world = world;
     this.viewport = new Viewport(world, this.pos);
   }
-
 
   move(dir) {
     switch(dir) {
@@ -32,5 +31,12 @@ export default class Player {
         break;
     }
     this.viewport.updateFocus(this.pos.x, this.pos.y);
+  }
+
+  serialize() {
+    return {
+      x: this.pos.x,
+      y: this.pos.y
+    };
   }
 }

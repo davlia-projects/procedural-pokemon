@@ -7,33 +7,28 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// InboundMessage is used to unmarshal incoming events
-type InboundMessage struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
-	Sender  int    `json:"id"`
-}
-
-// OutboundMessage is used to marshal outgoing events
-type OutboundMessage struct {
-	Type     string `json:"type"`
-	Message  string `json:"message"`
-	Receiver int    `json:"id"`
-}
-
 // Controller handles all ws connection events and is the driver module
 type Controller struct {
 	ReceiveChan chan InboundMessage
 	SendChan    chan OutboundMessage
-	Clients     map[int]*Client
+	Clients     map[int32]*Client
+	Game        Game
 }
 
 // NewController creates a new controller
 func NewController() Controller {
+	g := Game{
+		World: World{
+			Size:    100,
+			Seed:    0,
+			Players: []Player{},
+		},
+	}
 	c := Controller{
 		ReceiveChan: make(chan InboundMessage, 128),
 		SendChan:    make(chan OutboundMessage, 128),
-		Clients:     make(map[int]*Client),
+		Clients:     make(map[int32]*Client),
+		Game:        g,
 	}
 	return c
 }
@@ -48,31 +43,37 @@ func (C *Controller) handleInboundMessages() {
 		msg := <-C.ReceiveChan
 		switch msg.Type {
 		case "init":
-			C.sendMessage(
-				"init",
-				"assigning id to your bougie ass",
-				msg.Sender,
-			)
+			C.handleInit(msg)
+		case "sync":
+			C.handleSync(msg)
 		default:
 			log.Printf("message unhandled: %+v\n", msg)
 		}
 	}
 }
 
-func (C *Controller) sendMessage(t, msg string, id int) {
+func (C *Controller) sendMessage(t string, data Data, id int32) {
 	send := OutboundMessage{
 		Type:     t,
-		Message:  msg,
+		Data:     data,
 		Receiver: id,
 	}
 	C.SendChan <- send
+}
+
+func (C *Controller) broadcastMessage(t string, data Data, sender int32) {
+	for id := range C.Clients {
+		if id == sender {
+			continue
+		}
+		C.sendMessage(t, data, id)
+	}
 }
 
 func (C *Controller) handleOutboundMessages() {
 	for {
 		msg := <-C.SendChan
 		client, ok := C.Clients[msg.Receiver]
-		log.Printf("%+v\n", msg)
 		if !ok {
 			log.Printf("error: could not find connection by id\n")
 			continue
@@ -95,7 +96,7 @@ func (C *Controller) readFromClient(client *Client) {
 		err := client.ReadJSON(&msg)
 		if err != nil {
 			log.Printf("Connection closed by %d\n", client.ID)
-			delete(C.Clients, client.ID)
+			C.handleDisconnect(client.ID)
 			return
 		}
 		// TODO: this is sort of hacky IMO? should refactor in future
@@ -104,10 +105,10 @@ func (C *Controller) readFromClient(client *Client) {
 	}
 }
 
-func (C *Controller) nextID() int {
+func (C *Controller) nextID() int32 {
 	// TODO: do something else here that doesn't put your 4 years of higher education to fucking shame
 	for {
-		id := rand.Int()
+		id := rand.Int31()
 		if _, ok := C.Clients[id]; !ok {
 			return id
 		}

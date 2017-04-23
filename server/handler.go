@@ -37,4 +37,9 @@ func (C *Controller) handleDisconnect(id int32) {
 	players = append(players[:index], players[index+1:]...)
 	C.Game.World.Players = players
 	delete(C.Clients, id)
+	d := Data{
+		Message: "catch up plz",
+		Game:    C.Game,
+	}
+	C.broadcastMessage("sync", d, -1)
 }

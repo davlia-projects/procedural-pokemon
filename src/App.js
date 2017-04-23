@@ -35,7 +35,6 @@ export default class App {
   setupEventListeners() {
     window.addEventListener('keydown', (event) => {
       let { me } = this.world;
-      console.log(me);
       switch (event.keyCode) {
         case 32:
           break;

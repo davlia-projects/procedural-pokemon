@@ -29,29 +29,30 @@ export default class App {
 
   setupGame() {
     this.world = new World(DEFAULT_WORLD_SIZE);
-    this.player = new Player(this.world, DEFAULT_PLAYER_POS);
-    this.re = new RenderEngine(this.canvas, this.sprite, this.world, this.player);
-    this.re.render();
+    this.re = new RenderEngine(this.canvas, this.sprite, this.world);
   }
 
   setupEventListeners() {
     window.addEventListener('keydown', (event) => {
+      let { me } = this.world;
       switch (event.keyCode) {
+        case 32:
+          break;
         case 37:
-          this.player.move("left");
+          me.move("left", this.world);
           break;
         case 38:
-          this.player.move("down");
+          me.move("down", this.world);
           break;
         case 39:
-          this.player.move("right");
+          me.move("right", this.world);
           break;
         case 40:
-          this.player.move("up");
+          me.move("up", this.world);
           break;
       }
       this.sendEvent('update', {
-        player: this.player.serialize()
+        player: this.world.me.serialize()
       });
       this.re.render();
     });
@@ -100,18 +101,42 @@ export default class App {
     switch (type) {
       case 'init':
         this.clientID = id;
+        console.log(id);
+        this.createGame(data, id);
         break;
       case 'update':
-        this.applyUpdate(data)
+        this.applyUpdate(data);
+        break;
+      case 'delete':
+        this.removePlayer(data);
         break;
       default:
-        console.log('Event not handled', e.data);
+        console.log('event not handled', e.data);
     }
+  }
+
+  createGame(data) {
+    let { size, seed } = data.world;
+    let { pos, id } = data.player;
+    this.world.initWorld(size, pos, id);
+    this.ready = true;
+    this.re.render();
   }
 
   applyUpdate(data) {
     let { player } = data;
-    this.world.grid[player.x][player.y].hasPlayer = true;
-    this.re.render();
+    this.world.update(player);
+    if (this.ready) {
+      this.re.render();
+    }
+  }
+
+  removePlayer(data) {
+    let { player } = data;
+    console.log("REMOVING");
+    this.world.removePlayerByID(player.id);
+    if (this.ready) {
+      this.re.render();
+    }
   }
 }

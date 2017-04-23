@@ -7,26 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-// InboundMessage is used to unmarshal incoming events
-type InboundMessage struct {
-	Type   string `json:"type"`
-	Data   Data   `json:"data"`
-	Sender int    `json:"id"`
-}
-
-// OutboundMessage is used to marshal outgoing events
-type OutboundMessage struct {
-	Type     string `json:"type"`
-	Data     Data   `json:"data"`
-	Receiver int    `json:"id"`
-}
-
-// Data stores the payload of each message
-type Data struct {
-	Message string `json:"message"`
-	Player  Player `json:"player"`
-}
-
 // Controller handles all ws connection events and is the driver module
 type Controller struct {
 	ReceiveChan chan InboundMessage
@@ -54,13 +34,23 @@ func (C *Controller) handleInboundMessages() {
 		msg := <-C.ReceiveChan
 		switch msg.Type {
 		case "init":
+			p := Player{
+				Pos: Point{X: 10, Y: 10},
+				ID:  msg.Sender,
+			}
+			w := World{
+				Size: 100,
+				Seed: 0,
+			}
 			d := Data{
 				Message: "assigning id to your bougie ass",
+				World:   w,
+				Player:  p,
 			}
 			C.sendMessage("init", d, msg.Sender)
 			u := Data{
 				Message: "a new challenger approaches",
-				Player:  Player{X: 10, Y: 10},
+				Player:  p,
 			}
 			C.broadcastMessage("update", u, msg.Sender)
 		case "update":

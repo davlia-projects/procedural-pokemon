@@ -7,35 +7,58 @@ const TILEMAP = {
 };
 
 export default class RenderEngine {
-  constructor(canvas, sprite, world, player) {
+  constructor(canvas, sprite, world) {
     // canvas is 960 x 640
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.sprite = sprite;
     this.world = world;
-    this.player = player;
-    this.viewport = player.viewport;
+
+    // Viewport
+    this.vpWidth = 15;
+    this.vpHeight = 11;
+    this.halfWidth = Math.floor(this.vpWidth / 2);
+    this.halfHeight = Math.floor(this.vpHeight / 2);
+    this.viewport = new Array(this.vpWidth);
+    for (let i = 0; i < this.vpWidth; i++) {
+      this.viewport[i] = new Array(this.vpHeight);
+    }
   }
 
   render() {
-    let { width, height, cells } = this.viewport;
-    for (let i = 0; i < width; i++) {
-      for (let j = 0; j < height; j++) {
-        if (cells[i][j].hasPlayer) {
-          this.drawTile('P', i, j);
-        } else {
-          this.drawTile(cells[i][j].symbol, i, j);
-        }
+    this._renderTerrain();
+    this._renderCharacters();
+  }
+
+  _renderTerrain() {
+    let { pos } = this.world.me;
+    for (let i = 0; i < this.vpWidth; i++) {
+      for (let j = 0; j < this.vpHeight; j++) {
+        let x = i + pos.x - this.halfWidth;
+        let y = j + pos.y - this.halfHeight;
+        let tile = this.world.getTile(x, y);
+        this.drawTile(tile.symbol, i, j);
       }
     }
   }
+
+_renderCharacters() {
+  let { players } = this.world;
+  for (let p in players) {
+    let player = players[p];
+    console.log(players);
+    let tile = this.world.getTile(player.pos.x, player.pos.y);
+    let { me } = this.world;
+    this.drawTile('P', player.pos.x - me.pos.x + this.halfWidth, player.pos.y - me.pos.y + this.halfHeight);
+  }
+}
 
   drawTile(tile, x, y) {
     let spritePos = TILEMAP[tile];
     let { tileHeight, tileWidth } = this.sprite;
 
-    let canvasTileWidth = this.canvas.width / this.viewport.width;
-    let canvasTileHeight = this.canvas.height / this.viewport.height;
+    let canvasTileWidth = this.canvas.width / this.vpWidth;
+    let canvasTileHeight = this.canvas.height / this.vpHeight;
     let canvasPosx = x * canvasTileWidth;
     let canvasPosy = y * canvasTileHeight;
     this.ctx.drawImage(

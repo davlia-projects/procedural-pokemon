@@ -4,33 +4,33 @@ package main
 type InboundMessage struct {
 	Type   string `json:"type"`
 	Data   Data   `json:"data"`
-	Sender int    `json:"id"`
+	Sender int32  `json:"id"`
 }
 
 // OutboundMessage is used to marshal outgoing events
 type OutboundMessage struct {
 	Type     string `json:"type"`
 	Data     Data   `json:"data"`
-	Receiver int    `json:"id"`
+	Receiver int32  `json:"id"`
 }
 
 // Data stores the payload of each message
 type Data struct {
 	Message string `json:"message"`
-	Player  Player `json:"player"`
-	World   World  `json:"world"`
+	Game    Game   `json:"game"`
 }
 
 // Player encapsulates data for users
 type Player struct {
 	Pos Point `json:"pos"`
-	ID  int   `json:"id"`
+	ID  int32 `json:"id"`
 }
 
 // World encapsulates data for the world state
 type World struct {
-	Size int `json:"size"`
-	Seed int `json:"seed"`
+	Players []Player `json:"players"`
+	Size    int32    `json:"size"`
+	Seed    int32    `json:"seed"`
 }
 
 type Game struct {
@@ -39,6 +39,6 @@ type Game struct {
 
 // Point is a cartesian tuple
 type Point struct {
-	X int `json:"x"`
-	Y int `json:"y"`
+	X int32 `json:"x"`
+	Y int32 `json:"y"`
 }

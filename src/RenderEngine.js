@@ -46,7 +46,6 @@ _renderCharacters() {
   let { players } = this.world;
   for (let p in players) {
     let player = players[p];
-    console.log(players);
     let tile = this.world.getTile(player.pos.x, player.pos.y);
     let { me } = this.world;
     this.drawTile('P', player.pos.x - me.pos.x + this.halfWidth, player.pos.y - me.pos.y + this.halfHeight);

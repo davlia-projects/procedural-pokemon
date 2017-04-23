@@ -2,6 +2,7 @@ import Tile from './Tile.js'
 
 class Player {
   constructor(pos, id) {
+
     this.pos = {x: pos.x, y: pos.y};
     this.id = id;
   }
@@ -36,6 +37,11 @@ class Player {
     this.pos.y = pos.y;
   }
 
+  update(player) {
+    this.pos = player.pos;
+    this.id = player.id;
+  }
+
   serialize() {
     return {
       pos: {
@@ -50,6 +56,7 @@ class Player {
 export default class World {
   constructor() {
     this.players = {};
+    this.me = new Player({x: 0, y: 0}, -1);
     window.x = this;
   }
 
@@ -61,26 +68,14 @@ export default class World {
     }
   }
 
-  update(player) {
-    let { pos, id } = player;
-    let p = this.players[id];
-    // create new player and add it if it doesn't exist yet
-    if (!p) {
-      p = new Player(pos, id);
-      this.players[id] = p;
-
-    }
-    p.moveTo(pos);
-  }
-
-  removePlayerByID(id) {
-    delete this.players[id];
-
-  }
-
-  initWorld(size, pos, id) {
-    this.me = new Player(pos, id);
-    this.players[id] = this.me;
+  initWorld(world, id) {
+    let { players, size, seed } = world;
+    players.forEach(p => {
+      this.players[p.id] = p;
+      if (p.id === id) {
+        this.me.update(p);
+      }
+    });
 
     this.size = size;
     this.grid = new Array(size);
@@ -96,6 +91,16 @@ export default class World {
         }
       }
     }
+  }
+
+  syncPlayers(players, id) {
+    this.players = {};
+    players.forEach(p => {
+      this.players[p.id] = p;
+      if (p.id === id) {
+        this.me.update(p);
+      }
+    });
   }
 
   resetGrid() {
@@ -118,5 +123,18 @@ export default class World {
   }
 
   generateWildPokemonAreas() {
+  }
+
+  serialize() {
+    let players = [];
+    for (let p in this.players) {
+      console.log(this.players[p])
+      players.push(this.players[p]);
+    }
+    return {
+      players: players,
+      size: this.size,
+      seed: this.seed
+    };
   }
 }

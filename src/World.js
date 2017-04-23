@@ -1,7 +1,5 @@
 import Tile from './Tile.js'
 
-const BLACK = new Tile('0');
-
 export default class World {
   constructor(size) {
   	this.size = size;
@@ -24,7 +22,15 @@ export default class World {
     if (0 <= x && x < this.size && 0 <= y && y < this.size) {
       return this.grid[x][y];
     } else {
-      return BLACK;
+      return new Tile('0');
+    }
+  }
+
+  resetGrid() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        this.grid[i][j].hasPlayer = false;
+      }
     }
   }
 

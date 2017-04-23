@@ -3,5 +3,6 @@ export default class Tile {
   	this.spriteTextureCoords = null;
   	this.symbol = sym;
   	this.traversable = true;
+    this.hasPlayer = false;
   }
 }

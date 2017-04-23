@@ -2,7 +2,8 @@ const TILEMAP = {
   '0': {x: 32, y: 304},
   '1': {x: 16, y: 16},
   '2': {x: 48, y: 16},
-  'P': {x: 7 * 16, y: 16}
+  'P': {x: 7 * 16, y: 16},
+  'O': {x: 6 * 16, y: 2 * 16}
 };
 
 export default class RenderEngine {
@@ -20,7 +21,11 @@ export default class RenderEngine {
     let { width, height, cells } = this.viewport;
     for (let i = 0; i < width; i++) {
       for (let j = 0; j < height; j++) {
-        this.drawTile(cells[i][j].symbol, i, j);
+        if (cells[i][j].hasPlayer) {
+          this.drawTile('P', i, j);
+        } else {
+          this.drawTile(cells[i][j].symbol, i, j);
+        }
       }
     }
   }

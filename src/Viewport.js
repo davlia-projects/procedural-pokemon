@@ -24,6 +24,7 @@ export default class Viewport {
   }
 
   _sampleTiles() {
+    this.world.resetGrid();
     for (let i = 0; i < this.width; i++) {
       for (let j = 0; j < this.height; j++) {
         let x = i + this.focus.x - this.halfWidth;
@@ -31,7 +32,7 @@ export default class Viewport {
         this.cells[i][j] = this.world.getTile(x, y);
       }
     }
-    this.cells[Math.floor(this.width / 2)][Math.floor(this.height / 2)] = new Tile(PLAYER);
+    this.cells[Math.floor(this.width / 2)][Math.floor(this.height / 2)].hasPlayer = true;
   }
 
 

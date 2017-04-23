@@ -9,16 +9,22 @@ import (
 
 // InboundMessage is used to unmarshal incoming events
 type InboundMessage struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
-	Sender  int    `json:"id"`
+	Type   string `json:"type"`
+	Data   Data   `json:"data"`
+	Sender int    `json:"id"`
 }
 
 // OutboundMessage is used to marshal outgoing events
 type OutboundMessage struct {
 	Type     string `json:"type"`
-	Message  string `json:"message"`
+	Data     Data   `json:"data"`
 	Receiver int    `json:"id"`
+}
+
+// Data stores the payload of each message
+type Data struct {
+	Message string `json:"message"`
+	Player  Player `json:"player"`
 }
 
 // Controller handles all ws connection events and is the driver module
@@ -48,24 +54,43 @@ func (C *Controller) handleInboundMessages() {
 		msg := <-C.ReceiveChan
 		switch msg.Type {
 		case "init":
-			C.sendMessage(
-				"init",
-				"assigning id to your bougie ass",
-				msg.Sender,
-			)
+			d := Data{
+				Message: "assigning id to your bougie ass",
+			}
+			C.sendMessage("init", d, msg.Sender)
+			u := Data{
+				Message: "a new challenger approaches",
+				Player:  Player{X: 10, Y: 10},
+			}
+			C.broadcastMessage("update", u, msg.Sender)
+		case "update":
+			d := Data{
+				Message: "updating stuff lol",
+				Player:  msg.Data.Player,
+			}
+			C.broadcastMessage("update", d, msg.Sender)
 		default:
 			log.Printf("message unhandled: %+v\n", msg)
 		}
 	}
 }
 
-func (C *Controller) sendMessage(t, msg string, id int) {
+func (C *Controller) sendMessage(t string, data Data, id int) {
 	send := OutboundMessage{
 		Type:     t,
-		Message:  msg,
+		Data:     data,
 		Receiver: id,
 	}
 	C.SendChan <- send
+}
+
+func (C *Controller) broadcastMessage(t string, data Data, sender int) {
+	for id := range C.Clients {
+		if id == sender {
+			continue
+		}
+		C.sendMessage(t, data, id)
+	}
 }
 
 func (C *Controller) handleOutboundMessages() {

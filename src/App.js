@@ -6,7 +6,8 @@ import Sprite from './Sprite.js'
 const ASSETS = './assets';
 const SERVER_URL = 'ws://localhost:8000/play';
 const RESOLUTION_SCALE = 3;
-
+const DEFAULT_WORLD_SIZE = 100;
+const DEFAULT_PLAYER_POS = {x: 10, y: 10};
 export default class App {
   constructor () {
     this.canvas = document.createElement('canvas');
@@ -23,8 +24,12 @@ export default class App {
   setup() {
     this.setupWebsocket();
     this.setupEventListeners();
-    this.world = new World(100);
-    this.player = new Player(this.world);
+    this.setupGame();
+  }
+
+  setupGame() {
+    this.world = new World(DEFAULT_WORLD_SIZE);
+    this.player = new Player(this.world, DEFAULT_PLAYER_POS);
     this.re = new RenderEngine(this.canvas, this.sprite, this.world, this.player);
     this.re.render();
   }
@@ -45,6 +50,9 @@ export default class App {
           this.player.move("up");
           break;
       }
+      this.sendEvent('update', {
+        player: this.player.serialize()
+      });
       this.re.render();
     });
   }
@@ -63,9 +71,9 @@ export default class App {
 
   }
 
-/*******
- WebSocket Shenanigans
- *******/
+/**********************
+  WebSocket Shenanigans
+ **********************/
 
   setupWebsocket() {
     this.ws = new WebSocket(SERVER_URL);
@@ -74,23 +82,36 @@ export default class App {
   }
 
   onWSOpen() {
-    this.sendEvent('init', 'initializing connection and awaiting id assignment');
+    this.sendEvent('init', {message: 'initializing connection and awaiting id assignment'});
   }
 
-  sendEvent(type, message) {
-    console.log(type, message);
+  sendEvent(type, data) {
+    console.log("Sending: ", type, JSON.stringify(data));
     this.ws.send(JSON.stringify({
-      'type': type,
-      'message': message,
-      'id': this.clientID
+      type: type,
+      data: data,
+      id: this.clientID
     }));
   }
 
   receiveEvent(e) {
-    let { type, message, id } = JSON.parse(e.data);
-    console.log(type, message, id);
-    if (type === 'init') {
-      this.clientID = id;
+    let { type, data, id } = JSON.parse(e.data);
+    console.log("Receiving: ", e.data);
+    switch (type) {
+      case 'init':
+        this.clientID = id;
+        break;
+      case 'update':
+        this.applyUpdate(data)
+        break;
+      default:
+        console.log('Event not handled', e.data);
     }
+  }
+
+  applyUpdate(data) {
+    let { player } = data;
+    this.world.grid[player.x][player.y].hasPlayer = true;
+    this.re.render();
   }
 }

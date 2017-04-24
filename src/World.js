@@ -1,57 +1,5 @@
 import Tile from './Tile.js'
-
-class Player {
-  constructor(pos, id) {
-
-    this.pos = {x: pos.x, y: pos.y};
-    this.id = id;
-  }
-
-  move(dir, world) {
-    switch(dir) {
-      case 'right':
-        if (this.pos.x + 1 < world.size) {
-          this.pos.x += 1;
-        }
-        break;
-      case 'left':
-        if (this.pos.x - 1 >= 0) {
-          this.pos.x -= 1;
-        }
-        break;
-      case 'up':
-        if (this.pos.y + 1 < world.size) {
-          this.pos.y += 1;
-        }
-        break;
-      case 'down':
-        if (this.pos.y - 1 >= 0) {
-          this.pos.y -= 1;
-        }
-        break;
-    }
-  }
-
-  moveTo(pos) {
-    this.pos.x = pos.x;
-    this.pos.y = pos.y;
-  }
-
-  update(player) {
-    this.pos = player.pos;
-    this.id = player.id;
-  }
-
-  serialize() {
-    return {
-      pos: {
-        x: this.pos.x,
-        y: this.pos.y
-      },
-      id: this.id,
-    };
-  }
-}
+import Player from './Player.js'
 
 export default class World {
   constructor() {
@@ -82,13 +30,39 @@ export default class World {
     for (let i = 0; i < size; i++) {
       this.grid[i] = new Array(size);
     }
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
-        if (Math.random() > 0.5) {
-          this.grid[i][j] = new Tile('1');
+
+    // generate four regions
+    // top-left: grassy plains
+    for (let i = 0; i < size / 2.0; i++) {
+      for (let j = 0; j < size / 2.0; j++) {
+        var rand = Math.random();
+        if (rand < 0.75) {
+          this.grid[i][j] = new Tile('G', true);
+        } else if (rand < 0.9) {
+          this.grid[i][j] = new Tile('F', true);
+        } else if (rand < 0.95) {
+          this.grid[i][j] = new Tile('T', false);
         } else {
-          this.grid[i][j] = new Tile('2');
+          this.grid[i][j] = new Tile('F2', true);
         }
+      }
+    }
+    // top-right: snow region
+    for (let i = size / 2.0; i < size; i++) {
+      for (let j = 0; j < size / 2.0; j++) {
+        this.grid[i][j] = new Tile('S', true);
+      }
+    }
+    // bottom-left: desert rocky area
+    for (let i = 0; i < size; i++) {
+      for (let j = size / 2.0; j < size; j++) {
+        this.grid[i][j] = new Tile('D', true);
+      }
+    }
+    // bottom-right: water region
+    for (let i = size / 2.0; i < size; i++) {
+      for (let j = size / 2.0; j < size; j++) {
+        this.grid[i][j] = new Tile('W', true);
       }
     }
   }
@@ -122,13 +96,10 @@ export default class World {
   	}
   }
 
-  generateWildPokemonAreas() {
-  }
-
   serialize() {
     let players = [];
     for (let p in this.players) {
-      console.log(this.players[p])
+      // console.log(this.players[p])
       players.push(this.players[p]);
     }
     return {

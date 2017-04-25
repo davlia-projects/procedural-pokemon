@@ -7,15 +7,16 @@ const TILEMAP = {
 };
 
 const TERRAIN_TILEMAP = {
-  '0': {x: 240, y: 224},
+  '0': {x: 224, y: 224},
   'G': {x: 0, y: 2 * 16}, // grass
   'S': {x: 144, y: 48}, // snow
   'W': {x: 432, y: 48}, // water
-  'GR': {}, // dirt rock
+  'DR': {x: 64, y: 224}, // dirt rock
   'F': {x:0, y: 9 * 16}, // flower
-  'T': {x:16, y: 128},
-  'F2': {x:16, y: 192},
-  'D': {x: 721, y: 48}
+  'B': {x:16, y: 128}, // bush 
+  'F2': {x:16, y: 192}, // more flowers
+  'D': {x: 721, y: 48}, // sand
+  'SB': {x: 192, y: 112} // snow bush
   // more to come...
 };
 

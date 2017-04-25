@@ -41,7 +41,7 @@ export default class World {
         } else if (rand < 0.9) {
           this.grid[i][j] = new Tile('F', true);
         } else if (rand < 0.95) {
-          this.grid[i][j] = new Tile('T', false);
+          this.grid[i][j] = new Tile('B', false);
         } else {
           this.grid[i][j] = new Tile('F2', true);
         }
@@ -50,13 +50,23 @@ export default class World {
     // top-right: snow region
     for (let i = size / 2.0; i < size; i++) {
       for (let j = 0; j < size / 2.0; j++) {
-        this.grid[i][j] = new Tile('S', true);
+        var rand = Math.random();
+        if (rand < 0.8) {
+          this.grid[i][j] = new Tile('S', true);
+        } else {
+          this.grid[i][j] = new Tile('SB', false);
+        }
       }
     }
     // bottom-left: desert rocky area
     for (let i = 0; i < size; i++) {
       for (let j = size / 2.0; j < size; j++) {
-        this.grid[i][j] = new Tile('D', true);
+        var rand = Math.random();
+        if (rand < 0.8) {
+          this.grid[i][j] = new Tile('D', true);
+        } else {
+          this.grid[i][j] = new Tile('DR', false);
+        }
       }
     }
     // bottom-right: water region
@@ -70,11 +80,12 @@ export default class World {
   syncPlayers(players, id) {
     this.players = {};
     players.forEach(p => {
-      this.players[p.id] = p;
       if (p.id === id) {
-        this.me.update(p);
+        return;
       }
+      this.players[p.id] = p;
     });
+    this.players[this.me.id] = this.me;
   }
 
   resetGrid() {

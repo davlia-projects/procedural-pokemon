@@ -4,7 +4,7 @@ import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
 const ASSETS = './assets';
-const SERVER_URL = 'ws://davidliao.me:8000/play';
+const SERVER_URL = 'wss://davidliao.me:8000/play';
 const RESOLUTION_SCALE = 3;
 const DEFAULT_WORLD_SIZE = 100;
 const DEFAULT_PLAYER_POS = {x: 10, y: 10};

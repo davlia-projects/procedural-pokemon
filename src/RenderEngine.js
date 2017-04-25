@@ -13,7 +13,7 @@ const TERRAIN_TILEMAP = {
   'W': {x: 432, y: 48}, // water
   'DR': {x: 64, y: 224}, // dirt rock
   'F': {x:0, y: 9 * 16}, // flower
-  'B': {x:16, y: 128}, // bush 
+  'B': {x:16, y: 128}, // bush
   'F2': {x:16, y: 192}, // more flowers
   'D': {x: 721, y: 48}, // sand
   'SB': {x: 192, y: 112} // snow bush
@@ -72,7 +72,7 @@ export default class RenderEngine {
   }
 
   drawTile(tile, type, x, y) {
-    var spritePos, sprite;
+    let spritePos, sprite;
     switch (type) {
       case 'player':
         spritePos = {x: 82, y: 125};

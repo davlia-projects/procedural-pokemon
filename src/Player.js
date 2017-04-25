@@ -7,7 +7,7 @@ export default class Player {
   move(dir, world) {
     switch(dir) {
       case 'right':
-        if (this.pos.x + 1 < world.size 
+        if (this.pos.x + 1 < world.size
           && world.getTile(this.pos.x+1, this.pos.y).traversable) {
           this.pos.x += 1;
         }
@@ -33,7 +33,6 @@ export default class Player {
     }
   }
 
-  // not used?? 
   moveTo(pos) {
     this.pos.x = pos.x;
     this.pos.y = pos.y;

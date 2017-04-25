@@ -17,9 +17,6 @@ export default class App {
     this.pokemonSpriteSrc = `${ASSETS}/pokemon.png`;
     this.playerSpriteSrc = `${ASSETS}/player.png`;
     this.clientID = -1; // default null value for client ID
-
-    // TODO: remove this debug statement
-    window.x = this;
   }
 
   setup() {
@@ -31,10 +28,10 @@ export default class App {
   setupGame() {
     this.world = new World(DEFAULT_WORLD_SIZE);
     this.re = new RenderEngine(
-      this.canvas, 
-      this.terrainSprite, 
+      this.canvas,
+      this.terrainSprite,
       this.playerSprite,
-      this.pokemonSprite, 
+      this.pokemonSprite,
       this.world);
   }
 
@@ -105,13 +102,11 @@ export default class App {
       data: data,
       id: this.clientID
     }
-    // console.log("Sending: ", JSON.stringify(m));
     this.ws.send(JSON.stringify(m));
   }
 
   receiveEvent(e) {
     let { type, data, id } = JSON.parse(e.data);
-    // console.log("Receiving: ", e.data);
     switch (type) {
       case 'init':
         this.clientID = id;

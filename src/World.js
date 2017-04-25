@@ -35,7 +35,7 @@ export default class World {
     // top-left: grassy plains
     for (let i = 0; i < size / 2.0; i++) {
       for (let j = 0; j < size / 2.0; j++) {
-        var rand = Math.random();
+        let rand = Math.random();
         if (rand < 0.75) {
           this.grid[i][j] = new Tile('G', true);
         } else if (rand < 0.9) {
@@ -50,7 +50,7 @@ export default class World {
     // top-right: snow region
     for (let i = size / 2.0; i < size; i++) {
       for (let j = 0; j < size / 2.0; j++) {
-        var rand = Math.random();
+        let rand = Math.random();
         if (rand < 0.8) {
           this.grid[i][j] = new Tile('S', true);
         } else {
@@ -61,7 +61,7 @@ export default class World {
     // bottom-left: desert rocky area
     for (let i = 0; i < size; i++) {
       for (let j = size / 2.0; j < size; j++) {
-        var rand = Math.random();
+        let rand = Math.random();
         if (rand < 0.8) {
           this.grid[i][j] = new Tile('D', true);
         } else {
@@ -78,7 +78,7 @@ export default class World {
   }
 
   syncPlayers(players, id) {
-    // TODO: eliminate sync race condition serverside :( 
+    // TODO: eliminate sync race condition serverside :(
     this.players = {};
     players.forEach(p => {
       if (p.id === id) {
@@ -111,7 +111,6 @@ export default class World {
   serialize() {
     let players = [];
     for (let p in this.players) {
-      // console.log(this.players[p])
       players.push(this.players[p]);
     }
     return {

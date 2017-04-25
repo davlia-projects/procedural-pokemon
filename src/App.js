@@ -4,7 +4,7 @@ import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
 const ASSETS = './assets';
-const SERVER_URL = 'ws://davidliao.me:8000/play';
+const SERVER_URL = 'wss://davidliao.me:8000/play';
 const RESOLUTION_SCALE = 3;
 const DEFAULT_WORLD_SIZE = 100;
 const DEFAULT_PLAYER_POS = {x: 10, y: 10};
@@ -16,9 +16,6 @@ export default class App {
     this.canvas.height = 160 * RESOLUTION_SCALE;
     this.spriteSrc = `${ASSETS}/sprites.png`;
     this.clientID = -1; // default null value for client ID
-
-    // TODO: remove this debug statement
-    window.x = this;
   }
 
   setup() {
@@ -95,13 +92,11 @@ export default class App {
       data: data,
       id: this.clientID
     }
-    // console.log("Sending: ", JSON.stringify(m));
     this.ws.send(JSON.stringify(m));
   }
 
   receiveEvent(e) {
     let { type, data, id } = JSON.parse(e.data);
-    // console.log("Receiving: ", e.data);
     switch (type) {
       case 'init':
         this.clientID = id;

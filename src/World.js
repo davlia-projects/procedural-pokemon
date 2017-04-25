@@ -94,6 +94,7 @@ export default class World {
   }
 
   syncPlayers(players, id) {
+    // TODO: eliminate sync race condition serverside :( 
     this.players = {};
     players.forEach(p => {
       if (p.id === id) {

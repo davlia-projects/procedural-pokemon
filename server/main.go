@@ -37,7 +37,7 @@ func main() {
 	}
 	log.Printf("Listening and serving on %s\n", addr)
 
-	log.Fatal(s.ListenAndServe())
+        log.Fatal(s.ListenAndServeTLS("server.crt", "server.key"))
 }
 
 // health reports 200 if services is up and running

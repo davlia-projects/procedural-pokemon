@@ -94,13 +94,15 @@ export default class World {
   }
 
   syncPlayers(players, id) {
+    // TODO: eliminate sync race condition serverside :( 
     this.players = {};
     players.forEach(p => {
-      this.players[p.id] = p;
       if (p.id === id) {
-        this.me.update(p);
+        return;
       }
+      this.players[p.id] = p;
     });
+    this.players[this.me.id] = this.me;
   }
 
   resetGrid() {

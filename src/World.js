@@ -1,11 +1,11 @@
 import Tile from './Tile.js'
 import Player from './Player.js'
+import { util } from './Util.js'
 
 export default class World {
   constructor() {
     this.players = {};
     this.me = new Player({x: 0, y: 0}, -1);
-    window.x = this;
   }
 
   getTile(x, y) {
@@ -25,6 +25,7 @@ export default class World {
       }
     });
 
+    util.seed(seed);
     this.size = size;
     this.grid = new Array(size);
     for (let i = 0; i < size; i++) {
@@ -35,7 +36,7 @@ export default class World {
     // top-left: grassy plains
     for (let i = 0; i < size / 2.0; i++) {
       for (let j = 0; j < size / 2.0; j++) {
-        let rand = Math.random();
+        let rand = util.random();
         if (rand < 0.75) {
           this.grid[i][j] = new Tile('G', true);
         } else if (rand < 0.9) {
@@ -50,7 +51,7 @@ export default class World {
     // top-right: snow region
     for (let i = size / 2.0; i < size; i++) {
       for (let j = 0; j < size / 2.0; j++) {
-        let rand = Math.random();
+        let rand = util.random();
         if (rand < 0.8) {
           this.grid[i][j] = new Tile('S', true);
         } else {
@@ -61,7 +62,7 @@ export default class World {
     // bottom-left: desert rocky area
     for (let i = 0; i < size; i++) {
       for (let j = size / 2.0; j < size; j++) {
-        let rand = Math.random();
+        let rand = util.random();
         if (rand < 0.8) {
           this.grid[i][j] = new Tile('D', true);
         } else {
@@ -100,7 +101,7 @@ export default class World {
   spawnRandomPokemonLocations() {
   	for (let i = 0; i < this.size; i++) {
   		for (let j = 0; j < this.size; j++) {
-  			let rand = Math.random();
+  			let rand = util.random();
   			if (rand > 0.5) {
   				this.grid[i][j].symbol = '1';
   			}

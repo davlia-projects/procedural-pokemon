@@ -1,8 +1,8 @@
 import Tile from './Tile.js'
+import { util } from './Util.js'
 
 class Player {
   constructor(pos, id) {
-
     this.pos = {x: pos.x, y: pos.y};
     this.id = id;
   }
@@ -77,6 +77,7 @@ export default class World {
       }
     });
 
+    Util.seed(seed);
     this.size = size;
     this.grid = new Array(size);
     for (let i = 0; i < size; i++) {
@@ -94,7 +95,7 @@ export default class World {
   }
 
   syncPlayers(players, id) {
-    // TODO: eliminate sync race condition serverside :( 
+    // TODO: eliminate sync race condition serverside :(
     this.players = {};
     players.forEach(p => {
       if (p.id === id) {

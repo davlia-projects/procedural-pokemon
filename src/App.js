@@ -10,26 +10,29 @@ const DEFAULT_WORLD_SIZE = 100;
 const DEFAULT_PLAYER_POS = {x: 10, y: 10};
 export default class App {
   constructor () {
-    this.canvas = document.createElement('canvas');
-    // Aspect ratio of 3:2
+    this.canvas = document.createElement('canvas'); // Aspect ratio of 3:2
     this.canvas.width = 240 * RESOLUTION_SCALE;
     this.canvas.height = 160 * RESOLUTION_SCALE;
-    this.spriteSrc = `${ASSETS}/sprites.png`;
+    this.terrainSpriteSrc = `${ASSETS}/biomes.png`;
+    this.pokemonSpriteSrc = `${ASSETS}/pokemon.png`;
+    this.playerSpriteSrc = `${ASSETS}/player.png`;
     this.clientID = -1; // default null value for client ID
-
-    // TODO: remove this debug statement
-    window.x = this;
   }
 
   setup() {
     this.setupWebsocket();
-    this.setupEventListeners();
     this.setupGame();
+    this.setupEventListeners();
   }
 
   setupGame() {
     this.world = new World(DEFAULT_WORLD_SIZE);
-    this.re = new RenderEngine(this.canvas, this.sprite, this.world);
+    this.re = new RenderEngine(
+      this.canvas,
+      this.terrainSprite,
+      this.playerSprite,
+      this.pokemonSprite,
+      this.world);
   }
 
   setupEventListeners() {
@@ -63,8 +66,12 @@ export default class App {
 
   onLoad() {
     document.body.appendChild(this.canvas);
-    this.sprite = new Sprite(this.spriteSrc, () => {
-      this.setup();
+    this.terrainSprite = new Sprite(this.terrainSpriteSrc, 16, 16, () => {
+      this.pokemonSprite = new Sprite(this.pokemonSpriteSrc, 16, 16, () => {
+        this.playerSprite = new Sprite(this.playerSpriteSrc, 19, 24, () => {
+          this.setup();
+        });
+      });
     });
   }
 
@@ -95,13 +102,11 @@ export default class App {
       data: data,
       id: this.clientID
     }
-    // console.log("Sending: ", JSON.stringify(m));
     this.ws.send(JSON.stringify(m));
   }
 
   receiveEvent(e) {
     let { type, data, id } = JSON.parse(e.data);
-    // console.log("Receiving: ", e.data);
     switch (type) {
       case 'init':
         this.clientID = id;

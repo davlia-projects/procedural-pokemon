@@ -1,7 +1,6 @@
 export default class Tile {
-  constructor(sym) {
-  	this.spriteTextureCoords = null;
+  constructor(sym, t) {
   	this.symbol = sym;
-  	this.traversable = true;
+  	this.traversable = t;
   }
 }

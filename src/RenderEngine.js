@@ -6,14 +6,33 @@ const TILEMAP = {
   'O': {x: 6 * 16, y: 2 * 16}
 };
 
+const TERRAIN_TILEMAP = {
+  '0': {x: 224, y: 224},
+  'G': {x: 0, y: 2 * 16}, // grass
+  'S': {x: 144, y: 48}, // snow
+  'W': {x: 432, y: 48}, // water
+  'DR': {x: 64, y: 224}, // dirt rock
+  'F': {x:0, y: 9 * 16}, // flower
+  'B': {x:16, y: 128}, // bush
+  'F2': {x:16, y: 192}, // more flowers
+  'D': {x: 721, y: 48}, // sand
+  'SB': {x: 192, y: 112} // snow bush
+  // more to come...
+};
+
+const POKE_TILEMAP = {
+
+};
+
 export default class RenderEngine {
-  constructor(canvas, sprite, world) {
+  constructor(canvas, ts, pls, pks, world) {
     // canvas is 960 x 640
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
-    this.sprite = sprite;
     this.world = world;
-
+    this.terrainSprite = ts;
+    this.playerSprite = pls;
+    this.pokemonSprite = pks;
     // Viewport
     this.vpWidth = 15;
     this.vpHeight = 11;
@@ -37,31 +56,44 @@ export default class RenderEngine {
         let x = i + pos.x - this.halfWidth;
         let y = j + pos.y - this.halfHeight;
         let tile = this.world.getTile(x, y);
-        this.drawTile(tile.symbol, i, j);
+        this.drawTile(tile.symbol, 'terrain', i, j);
       }
     }
   }
 
-_renderCharacters() {
-  let { players } = this.world;
-  for (let p in players) {
-    let player = players[p];
-    let tile = this.world.getTile(player.pos.x, player.pos.y);
-    let { me } = this.world;
-    this.drawTile('P', player.pos.x - me.pos.x + this.halfWidth, player.pos.y - me.pos.y + this.halfHeight);
+  _renderCharacters() {
+    let { players } = this.world;
+    for (let p in players) {
+      let player = players[p];
+      let tile = this.world.getTile(player.pos.x, player.pos.y);
+      let { me } = this.world;
+      this.drawTile(null, 'player', player.pos.x - me.pos.x + this.halfWidth, player.pos.y - me.pos.y + this.halfHeight);
+    }
   }
-}
 
-  drawTile(tile, x, y) {
-    let spritePos = TILEMAP[tile];
-    let { tileHeight, tileWidth } = this.sprite;
-
+  drawTile(tile, type, x, y) {
+    let spritePos, sprite;
+    switch (type) {
+      case 'player':
+        spritePos = {x: 82, y: 125};
+        sprite = this.playerSprite;
+        break;
+      case 'terrain':
+        spritePos = TERRAIN_TILEMAP[tile];
+        sprite = this.terrainSprite;
+        break;
+      case 'pokemon':
+        spritePos = POKE_TILEMAP[tile];
+        sprite = this.pokemonSprite;
+        break;
+    }
+    let { tileHeight, tileWidth } = sprite;
     let canvasTileWidth = this.canvas.width / this.vpWidth;
     let canvasTileHeight = this.canvas.height / this.vpHeight;
     let canvasPosx = x * canvasTileWidth;
     let canvasPosy = y * canvasTileHeight;
     this.ctx.drawImage(
-      this.sprite.image,
+      sprite.image,
       spritePos.x, spritePos.y,
       tileWidth, tileHeight,
       canvasPosx, canvasPosy,

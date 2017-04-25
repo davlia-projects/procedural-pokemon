@@ -1,10 +1,10 @@
 export default class Sprite {
-  constructor(src, onload) {
+  constructor(src, w, h, onload) {
     this.image = new Image();
     this.image.src = src;
     this.image.onload = onload
-    this.tileWidth = 16;
-    this.tileHeight = 16;
+    this.tileWidth = w;
+    this.tileHeight = h;
     this.width = this.image.clientWidth / this.tileWidth;
     this.height = this.image.clientHeight / this.tileHeight;
   }

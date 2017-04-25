@@ -16,7 +16,7 @@ export default class Util {
   }
 
   random() {
-    return (this.next() - 1) / 2147483646;
+    return (this.randInt() - 1) / 2147483646;
   }
 }
 

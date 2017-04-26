@@ -17,7 +17,8 @@ no memes allowed
 - Completed random pokemon spawn algorithm to spawn specific pokemon types in each biome. For example, Charmanders will not spawn in the desert, Bulbasaur's will not spawn in the water, etc.
 - Changed Sprite class so it is able to handle sprites not just of size 16x16
 -Files changed: Tile.js, World.js, RenderEngine.js, App.js, Sprite.js
-- All tasks specified in the milestone (updated doc we pinged to rachel and later forwarded to Adam) were completed
+
+#### All tasks specified in the milestone (updated doc we pinged to rachel and later forwarded to Adam) were completed
 
 ## Milestone 1 Accomplishments
 

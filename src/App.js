@@ -4,7 +4,7 @@ import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
 const ASSETS = './assets';
-const SERVER_URL = 'wss://davidliao.me:8000/play';
+const SERVER_URL = 'ws://localhost:8000/play';
 const RESOLUTION_SCALE = 3;
 const DEFAULT_WORLD_SIZE = 100;
 const DEFAULT_PLAYER_POS = {x: 10, y: 10};
@@ -67,7 +67,7 @@ export default class App {
   onLoad() {
     document.body.appendChild(this.canvas);
     this.terrainSprite = new Sprite(this.terrainSpriteSrc, 16, 16, () => {
-      this.pokemonSprite = new Sprite(this.pokemonSpriteSrc, 16, 16, () => {
+      this.pokemonSprite = new Sprite(this.pokemonSpriteSrc, 64, 64, () => {
         this.playerSprite = new Sprite(this.playerSpriteSrc, 19, 24, () => {
           this.setup();
         });

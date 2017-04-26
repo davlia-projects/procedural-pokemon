@@ -39,6 +39,7 @@ export default class World {
         let rand = util.random();
         if (rand < 0.75) {
           this.grid[i][j] = new Tile('G', true);
+          this.randomPokemon(i, j, 'grass') // can also not add a pokemon
         } else if (rand < 0.9) {
           this.grid[i][j] = new Tile('F', true);
         } else if (rand < 0.95) {
@@ -54,6 +55,7 @@ export default class World {
         let rand = util.random();
         if (rand < 0.8) {
           this.grid[i][j] = new Tile('S', true);
+          this.randomPokemon(i, j, 'snow') // can also not add a pokemon
         } else {
           this.grid[i][j] = new Tile('SB', false);
         }
@@ -65,6 +67,7 @@ export default class World {
         let rand = util.random();
         if (rand < 0.8) {
           this.grid[i][j] = new Tile('D', true);
+          this.randomPokemon(i, j, 'sand') // can also not add a pokemon
         } else {
           this.grid[i][j] = new Tile('DR', false);
         }
@@ -73,7 +76,13 @@ export default class World {
     // bottom-right: water region
     for (let i = size / 2.0; i < size; i++) {
       for (let j = size / 2.0; j < size; j++) {
-        this.grid[i][j] = new Tile('W', true);
+        let rand = util.random();
+        if (rand < 0.8) {
+          this.grid[i][j] = new Tile('W', true);
+          this.randomPokemon(i, j, 'water') // can also not add a pokemon
+        } else {
+          this.grid[i][j] = new Tile('WR', false);
+        }
       }
     }
   }
@@ -98,15 +107,38 @@ export default class World {
     }
   }
 
-  spawnRandomPokemonLocations() {
-  	for (let i = 0; i < this.size; i++) {
-  		for (let j = 0; j < this.size; j++) {
-  			let rand = util.random();
-  			if (rand > 0.5) {
-  				this.grid[i][j].symbol = '1';
-  			}
-  		}
-  	}
+  randomPokemon(i, j, region) {
+		let rand = util.random();
+    switch(region) {
+      case 'grass':
+        if (rand < 0.1) {
+          this.grid[i][j].pokemon = 'g1';
+        } else if (rand < 0.15) {
+          this.grid[i][j].pokemon = 'g2';
+        } else if (rand < 0.2) {
+          this.grid[i][j].pokemon = 'g3';
+        }
+        break;
+      case 'water':
+        if (rand < 0.1) {
+          this.grid[i][j].pokemon = 'w1';
+        }
+        break;
+      case 'sand':
+        if (rand < 0.1) {
+          this.grid[i][j].pokemon = 's1';
+        } else if (rand < 0.15) {
+          this.grid[i][j].pokemon = 's2';
+        } else if (rand < 0.2) {
+          this.grid[i][j].pokemon = 's3';
+        }
+        break;
+      case 'snow':
+        if (rand < 0.01) {
+          this.grid[i][j].pokemon = 'i1';
+        }
+        break;
+    }
   }
 
   serialize() {

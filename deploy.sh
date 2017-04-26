@@ -4,6 +4,8 @@ DEPLOY_DIR=$PROJ_DIR/../procedural_pokemon_build
 set -o errexit
 
 printf "Building...\n"
+git checkout master 1>/dev/null 2>/dev/null
+git pull origin master 1>/dev/null 2>/dev/null
 npm run build > /dev/null
 
 printf "Creating deploy environment...\n"

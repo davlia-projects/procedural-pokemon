@@ -14,6 +14,8 @@ fi
 
 mkdir -p $DEPLOY_DIR
 cp -R $BUILD_DIR/* $DEPLOY_DIR
+cp -R $PROJ_DIR/assets $DEPLOY_DIR
+cp $PROJ_DIR/index.html $DEPLOY_DIR
 cd $DEPLOY_DIR
 
 printf "Deploying...\n"
@@ -23,8 +25,9 @@ git checkout -b gh-pages 1>/dev/null 2>/dev/null
 git add -A > /dev/null
 git commit -am "deploying" > /dev/null
 git push -f origin gh-pages 1>/dev/null 2>/dev/null
-printf "Success!\n"
 
 printf "Cleaning up...\n"
 rm -rf $BUILD_DIR
 rm -rf $DEPLOY_DIR
+
+printf "Success!\n"

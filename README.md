@@ -4,10 +4,11 @@ no memes allowed
 
 ## Milestone 2 Accomplishments
 ### David
-- Implemented networking tools and functionality.
-- Fixed server-side race conditions
+- Made the game multiplayer. Networking for proceduralism. (this is like a 4/5 on the difficulty scale)
+- Slick differential updates to sync game state
+- Fixed all (I think) server-side race conditions and bugs
 - Implemented randomized behavior based off of a global seed variables defined by the user, so instaces of our randomized pokemon game are standardized for each player on the network
-- Refactored many deprecated components of the code to make developing the next milestone less of a headache
+- Refactors
 
 ### Joseph
 - Updated sprites for the character, terrtain, and Pokemon

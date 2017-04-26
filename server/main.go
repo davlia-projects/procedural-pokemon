@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -23,6 +24,8 @@ var (
 )
 
 func main() {
+	env := os.Getenv("environment")
+
 	go c.run()
 	r := mux.NewRouter()
 
@@ -36,9 +39,11 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 	log.Printf("Listening and serving on %s\n", addr)
-
-    log.Fatal(s.ListenAndServeTLS())
-    // log.Fatal(s.ListenAndServe()) plz keep this here for local dev purposes
+	if env == "production" {
+		log.Fatal(s.ListenAndServeTLS("server.crt", "server.key"))
+	} else {
+		log.Fatal(s.ListenAndServe())
+	}
 }
 
 // health reports 200 if services is up and running

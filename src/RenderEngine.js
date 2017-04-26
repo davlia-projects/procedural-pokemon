@@ -87,7 +87,7 @@ export default class RenderEngine {
         let x = i + pos.x - this.halfWidth;
         let y = j + pos.y - this.halfHeight;
         let tile = this.world.getTile(x, y);
-        if (tile.pokemon !== null) {
+        if (tile.pokemon !== undefined) {
           this.drawTile(tile.pokemon, 'pokemon', i, j);
         }
       }

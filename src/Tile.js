@@ -1,7 +1,7 @@
 export default class Tile {
   constructor(sym, t) {
   	this.symbol = sym;
-  	this.pokemon = null;
+  	this.pokemon = undefined;
   	this.traversable = t;
   }
 }

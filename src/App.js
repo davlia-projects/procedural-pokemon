@@ -67,7 +67,7 @@ export default class App {
   onLoad() {
     document.body.appendChild(this.canvas);
     this.terrainSprite = new Sprite(this.terrainSpriteSrc, 16, 16, () => {
-      this.pokemonSprite = new Sprite(this.pokemonSpriteSrc, 16, 16, () => {
+      this.pokemonSprite = new Sprite(this.pokemonSpriteSrc, 64, 64, () => {
         this.playerSprite = new Sprite(this.playerSpriteSrc, 19, 24, () => {
           this.setup();
         });

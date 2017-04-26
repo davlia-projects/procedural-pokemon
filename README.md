@@ -1,6 +1,23 @@
 # Procedural Pokemon
 no memes allowed
 
+
+## Milestone 2 Accomplishments
+### David
+- Implemented networking tools and functionality.
+- Fixed server-side race conditions
+- Implemented randomized behavior based off of a global seed variables defined by the user, so instaces of our randomized pokemon game are standardized for each player on the network
+- Refactored many deprecated components of the code to make developing the next milestone less of a headache
+
+### Joseph
+- Updated sprites for the character, terrtain, and Pokemon
+- Implemented biomes - world is split into four quadrants (grass, desert, water, snow), and the sprite textures now have color to better display the distinct biomes
+- Expanded Tile data structure to hold pokemon information, as well as whether or not certain parts of the terrain are traversable
+- Completed random pokemon spawn algorithm to spawn specific pokemon types in each biome. For example, Charmanders will not spawn in the desert, Bulbasaur's will not spawn in the water, etc.
+- Changed Sprite class so it is able to handle sprites not just of size 16x16
+-Files changed: Tile.js, World.js, RenderEngine.js, App.js, Sprite.js
+- All tasks specified in the milestone (updated doc we pinged to rachel and later forwarded to Adam) were completed
+
 ## Milestone 1 Accomplishments
 
 ### David

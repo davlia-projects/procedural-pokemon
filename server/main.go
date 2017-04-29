@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -20,7 +21,7 @@ var (
 		},
 	}
 	certFile = "./ssl/davidliao_me.crt"
-        keyFile  = "./ssl/davidliao.me.key"
+	keyFile  = "./ssl/davidliao.me.key"
 	c        = NewController()
 )
 
@@ -41,11 +42,9 @@ func main() {
 	}
 	log.Printf("Listening and serving on %s\n", addr)
 	if env == "production" {
-		log.Fatal(s.ListenAndServeTLS("server.crt", "server.key"))
-//		log.Fatal(http.ListenAndServeTLS(addr, certFile, keyFile, r))
+		log.Fatal(s.ListenAndServeTLS(certFile, keyFile))
 	} else {
 		log.Fatal(s.ListenAndServe())
-//		log.Fatal(http.ListenAndServeTLS(addr, certFile, keyFile, r))
 	}
 }
 

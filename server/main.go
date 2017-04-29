@@ -19,8 +19,8 @@ var (
 			return true
 		},
 	}
-	certFile = "server.crt"
-	keyFile  = "server.key"
+	certFile = "./ssl/davidliao_me.crt"
+        keyFile  = "./ssl/davidliao.me.key"
 	c        = NewController()
 )
 
@@ -33,18 +33,19 @@ func main() {
 	r.HandleFunc("/health", health)
 	r.HandleFunc("/play", handleConnection)
 
-	// s := http.Server{
-	// 	Handler:      r,
-	// 	Addr:         addr,
-	// 	WriteTimeout: 15 * time.Second,
-	// 	ReadTimeout:  15 * time.Second,
-	// }
+	s := http.Server{
+		Handler:      r,
+		Addr:         addr,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
 	log.Printf("Listening and serving on %s\n", addr)
 	if env == "production" {
-		// log.Fatal(s.ListenAndServeTLS("server.crt", "server.key"))
-		log.Fatal(http.ListenAndServeTLS(addr, certFile, keyFile, r))
+		log.Fatal(s.ListenAndServeTLS("server.crt", "server.key"))
+//		log.Fatal(http.ListenAndServeTLS(addr, certFile, keyFile, r))
 	} else {
-		// log.Fatal(s.ListenAndServe())
+		log.Fatal(s.ListenAndServe())
+//		log.Fatal(http.ListenAndServeTLS(addr, certFile, keyFile, r))
 	}
 }
 

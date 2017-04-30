@@ -9,7 +9,7 @@ func (C *Controller) handleInit(msg InboundMessage) {
 		SpriteID: "F",
 		Dir:      "down",
 	}
-	C.World.Players[msg.Sender] = p
+	C.World.Agents[msg.Sender] = p
 	init := Data{
 		Message: "alrighty, here you go",
 		Init:    Init{C.World},
@@ -32,7 +32,7 @@ func (C *Controller) handleUpdate(msg InboundMessage) {
 	// TODO: Apply state validation, more granular changes, copy by reference (maybe?)
 	// Apply update to server state
 	for _, p := range msg.Data.Update.Delta {
-		C.World.Players[p.ID] = p
+		C.World.Agents[p.ID] = p
 	}
 
 	// Forward update to all players
@@ -45,8 +45,8 @@ func (C *Controller) handleUpdate(msg InboundMessage) {
 
 func (C *Controller) handleDisconnect(id int32) {
 	// Remove the player from our server state and client from connections
-	removedPlayer := C.World.Players[id]
-	delete(C.World.Players, id)
+	removedPlayer := C.World.Agents[id]
+	delete(C.World.Agents, id)
 	delete(C.Clients, id)
 
 	// Update all other players

@@ -1,4 +1,4 @@
-export default class Player {
+export default class Agent {
   constructor(pos, id) {
     this.pos = {x: pos.x, y: pos.y};
     this.dir = 'down'; // default facing down
@@ -42,11 +42,11 @@ export default class Player {
     this.pos.y = pos.y;
   }
 
-  update(player) {
-    this.pos = player.pos;
-    this.id = player.id;
-    this.spriteID = player.spriteID;
-    this.dir = player.dir
+  update(agent) {
+    this.pos = agent.pos;
+    this.id = agent.id;
+    this.spriteID = agent.spriteID;
+    this.dir = agent.dir
   }
 
   // Deprecated and replaced by `update` which handles deserializing -- David

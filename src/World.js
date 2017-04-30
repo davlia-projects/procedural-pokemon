@@ -4,7 +4,7 @@ import { util } from './Util.js'
 
 export default class World {
   constructor() {
-    this.players = {};
+    this.agents = {};
     this.me = new Player({x: 0, y: 0}, -1);
   }
 
@@ -21,9 +21,9 @@ export default class World {
     players.forEach(p => {
       if (p.id === id) {
         this.me.update(p);
-        this.players[p.id] = this.me;
+        this.agents[p.id] = this.me;
       } else {
-        this.players[p.id] = p;
+        this.agents[p.id] = p;
       }
     });
 
@@ -89,16 +89,23 @@ export default class World {
     }
   }
 
-  syncPlayers(players, id) {
-    // TODO: eliminate sync race condition serverside :(
-    this.players = {};
-    players.forEach(p => {
-      if (p.id === id) {
-        return;
-      }
-      this.players[p.id] = p;
+  // TODO: should we differentiate between agent types? :thinking:
+  addAgents(agents) {
+    agents.forEach(a => {
+      this.agents[a.id] = a;
     });
-    this.players[this.me.id] = this.me;
+  }
+
+  updateAgents(agents) {
+    agents.forEach(a => {
+      this.agents[a.id].update(a);
+    });
+  }
+
+  deleteAgents(agents) {
+    agents.forEach(a => {
+      delete this.agents[a.id];
+    });
   }
 
   resetGrid() {

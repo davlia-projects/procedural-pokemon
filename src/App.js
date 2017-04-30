@@ -55,10 +55,10 @@ export default class App {
           me.move("down", this.world);
           break;
       }
-      this.sendEvent('sync', {
+      this.sendEvent('update', {
         message: 'syncing shit',
-        game: {
-          world: this.world.serialize()
+        update: {
+          delta: me
         }
       });
       this.re.render();
@@ -114,8 +114,14 @@ export default class App {
         this.clientID = id;
         this.world.initWorld(data.game.world, id);
         break;
-      case 'sync':
-        this.world.syncPlayers(data.game.world.players, id);
+      case 'add':
+        this.world.addAgents(data.update.add);
+        break;
+      case 'update':
+        this.world.updateAgents(data.update.delta);
+        break;
+      case 'delete':
+        this.world.deleteAgents(data.update.delete);
         break;
       default:
         console.log('event not handled', e.data);

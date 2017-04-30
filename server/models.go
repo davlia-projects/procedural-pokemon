@@ -28,10 +28,9 @@ type Init struct {
 
 // World encapsulates data for the world state
 type World struct {
-	Players    map[int32]Agent `json:"players"`
-	Characters map[int32]Agent `json:"characters"`
-	Size       int32           `json:"size"`
-	Seed       int32           `json:"seed"`
+	Agents map[int32]Agent `json:"agents"`
+	Size   int32           `json:"size"`
+	Seed   int32           `json:"seed"`
 }
 
 // Agent encapsulates data for users

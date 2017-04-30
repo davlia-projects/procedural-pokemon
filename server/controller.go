@@ -18,10 +18,9 @@ type Controller struct {
 // NewController creates a new controller
 func NewController() Controller {
 	w := World{
-		Size:       100,
-		Seed:       0,
-		Players:    map[int32]Agent{},
-		Characters: map[int32]Agent{},
+		Size:   100,
+		Seed:   0,
+		Agents: map[int32]Agent{},
 	}
 	c := Controller{
 		ReceiveChan: make(chan InboundMessage, 128),

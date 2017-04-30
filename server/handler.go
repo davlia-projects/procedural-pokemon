@@ -45,8 +45,8 @@ func (C *Controller) handleUpdate(msg InboundMessage) {
 
 func (C *Controller) handleDisconnect(id int32) {
 	// Remove the player from our server state and client from connections
-	removedPlayer := C.Game.World.Players[id]
-	delete(C.Game.World.Players, id)
+	removedPlayer := C.World.Players[id]
+	delete(C.World.Players, id)
 	delete(C.Clients, id)
 
 	// Update all other players

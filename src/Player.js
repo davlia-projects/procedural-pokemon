@@ -2,7 +2,7 @@ export default class Player {
   constructor(pos, id) {
     this.pos = {x: pos.x, y: pos.y};
     this.dir = 'down'; // default facing down
-    this.spriteID = 'F0';
+    this.spriteID = 'F';
     this.id = id;
   }
 

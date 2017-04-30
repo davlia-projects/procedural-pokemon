@@ -12,23 +12,22 @@ type Controller struct {
 	ReceiveChan chan InboundMessage
 	SendChan    chan OutboundMessage
 	Clients     map[int32]*Client
-	Game        Game
+	World       World
 }
 
 // NewController creates a new controller
 func NewController() Controller {
-	g := Game{
-		World: World{
-			Size:    100,
-			Seed:    0,
-			Players: []Player{},
-		},
+	w := World{
+		Size:       100,
+		Seed:       0,
+		Players:    map[int32]Agent{},
+		Characters: map[int32]Agent{},
 	}
 	c := Controller{
 		ReceiveChan: make(chan InboundMessage, 128),
 		SendChan:    make(chan OutboundMessage, 128),
 		Clients:     make(map[int32]*Client),
-		Game:        g,
+		World:       w,
 	}
 	return c
 }
@@ -44,8 +43,8 @@ func (C *Controller) handleInboundMessages() {
 		switch msg.Type {
 		case "init":
 			C.handleInit(msg)
-		case "sync":
-			C.handleSync(msg)
+		case "update":
+			C.handleUpdate(msg)
 		default:
 			log.Printf("message unhandled: %+v\n", msg)
 		}
@@ -100,6 +99,7 @@ func (C *Controller) readFromClient(client *Client) {
 			return
 		}
 		// TODO: this is sort of hacky IMO? should refactor in future
+		// Fill in the ID as part of the incoming message
 		msg.Sender = client.ID
 		C.ReceiveChan <- msg
 	}

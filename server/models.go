@@ -14,31 +14,44 @@ type OutboundMessage struct {
 	Receiver int32  `json:"id"`
 }
 
-// Data stores the payload of each message
+// Data stores the primary payload of each message
 type Data struct {
 	Message string `json:"message"`
-	Game    Game   `json:"game"`
+	Init    Init   `json:"init"`
+	Update  Update `json:"update"`
 }
 
-// Player encapsulates data for users
-type Player struct {
-	Pos Point `json:"pos"`
-	ID  int32 `json:"id"`
+// Init encapsulates data to initialize game state for new connections
+type Init struct {
+	World World `json:"world"`
 }
 
 // World encapsulates data for the world state
 type World struct {
-	Players []Player `json:"players"`
-	Size    int32    `json:"size"`
-	Seed    int32    `json:"seed"`
+	Players    map[int32]Agent `json:"players"`
+	Characters map[int32]Agent `json:"characters"`
+	Size       int32           `json:"size"`
+	Seed       int32           `json:"seed"`
 }
 
-type Game struct {
-	World World `json:"world"`
+// Agent encapsulates data for users
+type Agent struct {
+	Type     string `json:"type"`
+	Pos      Point  `json:"pos"`
+	ID       int32  `json:"id"`
+	SpriteID string `json:"spriteID"`
+	Dir      string `json:"dir"`
 }
 
 // Point is a cartesian tuple
 type Point struct {
 	X int32 `json:"x"`
 	Y int32 `json:"y"`
+}
+
+// Update encapsulates all state differences between t_i and t_{i+1}
+type Update struct {
+	Add    []Agent `json:"add"`
+	Delta  []Agent `json:"delta"`
+	Delete []Agent `json:"delete"`
 }

@@ -1,45 +1,61 @@
 package main
 
 func (C *Controller) handleInit(msg InboundMessage) {
-	p := Player{
-		Pos: Point{X: 10, Y: 10},
-		ID:  msg.Sender,
+	// Initialize newly connected user
+	p := Agent{
+		Type:     "player",
+		Pos:      Point{X: 15, Y: 15}, // Default spawn location is 10, 10 for now. We can change this later -- David
+		ID:       msg.Sender,
+		SpriteID: "F",
+		Dir:      "down",
 	}
-	players := C.Game.World.Players
-	players = append(players, p)
-	C.Game.World.Players = players
-	d := Data{
+	C.World.Players[msg.Sender] = p
+	init := Data{
 		Message: "alrighty, here you go",
-		Game:    C.Game,
+		Init:    Init{C.World},
 	}
 
-	C.sendMessage("init", d, msg.Sender)
-	C.broadcastMessage("sync", d, msg.Sender)
+	C.sendMessage("init", init, msg.Sender)
+
+	// Update all other players
+	u := Update{
+		Add: []Agent{p},
+	}
+	update := Data{
+		Message: "let's keep everyone on the same page",
+		Update:  u,
+	}
+	C.broadcastMessage("add", update, msg.Sender)
 }
 
-func (C *Controller) handleSync(msg InboundMessage) {
-	C.Game = msg.Data.Game
+func (C *Controller) handleUpdate(msg InboundMessage) {
+	// TODO: Apply state validation, more granular changes, copy by reference (maybe?)
+	// Apply update to server state
+	for _, p := range msg.Data.Update.Delta {
+		C.World.Players[p.ID] = p
+	}
+
+	// Forward update to all players
 	d := Data{
 		Message: "catch up plz",
-		Game:    C.Game,
+		Update:  msg.Data.Update,
 	}
-	C.broadcastMessage("sync", d, msg.Sender)
+	C.broadcastMessage("update", d, msg.Sender)
 }
 
 func (C *Controller) handleDisconnect(id int32) {
-	players := C.Game.World.Players
-	index := -1
-	for i, p := range players {
-		if p.ID == id {
-			index = i
-		}
-	}
-	players = append(players[:index], players[index+1:]...)
-	C.Game.World.Players = players
+	// Remove the player from our server state and client from connections
+	removedPlayer := C.Game.World.Players[id]
+	delete(C.Game.World.Players, id)
 	delete(C.Clients, id)
+
+	// Update all other players
+	u := Update{
+		Delete: []Agent{removedPlayer},
+	}
 	d := Data{
 		Message: "catch up plz",
-		Game:    C.Game,
+		Update:  u,
 	}
-	C.broadcastMessage("sync", d, -1)
+	C.broadcastMessage("delete", d, -1)
 }

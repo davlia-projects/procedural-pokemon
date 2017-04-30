@@ -5,6 +5,7 @@ import Sprite from './Sprite.js'
 
 const ASSETS = './assets';
 const SERVER_URL = 'wss://davidliao.me:8000/play';
+const LOCAL_SERVER_URL = 'ws://localhost:8000/play';
 const RESOLUTION_SCALE = 3;
 const DEFAULT_WORLD_SIZE = 100;
 const DEFAULT_PLAYER_POS = {x: 10, y: 10};
@@ -45,13 +46,13 @@ export default class App {
           me.move("left", this.world);
           break;
         case 38:
-          me.move("down", this.world);
+          me.move("up", this.world);
           break;
         case 39:
           me.move("right", this.world);
           break;
         case 40:
-          me.move("up", this.world);
+          me.move("down", this.world);
           break;
       }
       this.sendEvent('sync', {
@@ -66,9 +67,10 @@ export default class App {
 
   onLoad() {
     document.body.appendChild(this.canvas);
+    // TODO: turn into Promise.All instead of callback chain
     this.terrainSprite = new Sprite(this.terrainSpriteSrc, 16, 16, () => {
       this.pokemonSprite = new Sprite(this.pokemonSpriteSrc, 64, 64, () => {
-        this.playerSprite = new Sprite(this.playerSpriteSrc, 19, 24, () => {
+        this.playerSprite = new Sprite(this.playerSpriteSrc, 25, 30, () => {
           this.setup();
         });
       });
@@ -87,7 +89,7 @@ export default class App {
  **********************/
 
   setupWebsocket() {
-    this.ws = new WebSocket(SERVER_URL);
+    this.ws = new WebSocket(LOCAL_SERVER_URL);
     this.ws.onopen = this.onWSOpen.bind(this);
     this.ws.onmessage = this.receiveEvent.bind(this);
   }

@@ -19,9 +19,11 @@ export default class World {
   initWorld(world, id) {
     let { players, size, seed } = world;
     players.forEach(p => {
-      this.players[p.id] = p;
       if (p.id === id) {
         this.me.update(p);
+        this.players[p.id] = this.me;
+      } else {
+        this.players[p.id] = p;
       }
     });
 

@@ -32,6 +32,7 @@ func main() {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/health", health)
+	r.HandleFunc("/", health)
 	r.HandleFunc("/play", handleConnection)
 
 	s := http.Server{
@@ -50,7 +51,7 @@ func main() {
 
 // health reports 200 if services is up and running
 func health(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "we healthy bois")
+	fmt.Fprintf(w, "it's alive :O")
 }
 
 // handleConnection handles websocket requests from client

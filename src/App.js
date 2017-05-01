@@ -2,7 +2,7 @@ import World from './World.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
-window.DEBUG_MODE = 1;
+window.DEBUG_MODE = 0;
 const ASSETS = './assets';
 const SERVER_URL = 'wss://davidliao.me:8000/play';
 const LOCAL_SERVER_URL = 'ws://localhost:8000/play';

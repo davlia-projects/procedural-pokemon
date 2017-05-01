@@ -43,8 +43,8 @@ export default class World {
     for (let i = 0; i < num_cities; i++) {
       let x = Math.floor(util.random() * size);
       let y = Math.floor(util.random() * size);
-      let rx = Math.floor(util.random() * size / 8 + size / 16);
-      let ry = Math.floor(util.random() * size / 8 + size / 16);
+      let rx = Math.floor(util.random() * size / 8 + size / 8);
+      let ry = Math.floor(util.random() * size / 8 + size / 8);
       let city = {x, y, rx, ry}; 
       cities.push(city);
     }
@@ -53,7 +53,6 @@ export default class World {
     for (let i = 0; i < num_cities-1; i++) {
       let c = cities[i];
       let nc = cities[i+1];
-
       let pathRadius = size / 128;
       let dx = nc.x - c.x;
       let dy = nc.y - c.y;

@@ -5,7 +5,6 @@ import { util } from './Util.js'
 export default class World {
   constructor() {
     this.agents = {};
-    this.me = new Agent({x: 0, y: 0}, -1);
   }
 
   getTile(x, y) {
@@ -18,13 +17,10 @@ export default class World {
 
   initWorld(world, myID) {
     let { agents, size, seed } = world;
-    for (let agentID in agents) {
-      if (agentID === myID) {
-        this.me.update(agents[myID]);
-        this.agents[myID] = this.me;
-      } else {
-        this.agents[myID] = agents[agentID]
-      }
+    this.me = myID;
+    for (let id in agents) {
+      let agentID = parseInt(id);
+      this.agents[agentID] = new Agent(agents[id]);
     }
 
     util.seed(seed);
@@ -92,7 +88,7 @@ export default class World {
   // TODO: should we differentiate between agent types? :thinking:
   addAgents(agents) {
     agents.forEach(a => {
-      this.agents[a.id] = a;
+      this.agents[a.id] = new Agent(a);
     });
   }
 
@@ -106,6 +102,10 @@ export default class World {
     agents.forEach(a => {
       delete this.agents[a.id];
     });
+  }
+
+  getMe() {
+    return this.agents[this.me];
   }
 
   resetGrid() {

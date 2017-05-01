@@ -37,27 +37,27 @@ export default class App {
 
   setupEventListeners() {
     window.addEventListener('keydown', (event) => {
-      let { me } = this.world;
+      let me = this.world.getMe();
       switch (event.keyCode) {
         case 32:
           break;
         case 37:
-          me.move("left", this.world);
+          me.move('left', this.world);
           break;
         case 38:
-          me.move("up", this.world);
+          me.move('up', this.world);
           break;
         case 39:
-          me.move("right", this.world);
+          me.move('right', this.world);
           break;
         case 40:
-          me.move("down", this.world);
+          me.move('down', this.world);
           break;
       }
       this.sendEvent('update', {
         message: 'syncing shit',
         update: {
-          delta: me
+          delta: [me]
         }
       });
       this.re.render();

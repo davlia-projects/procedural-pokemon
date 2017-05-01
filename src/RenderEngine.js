@@ -66,7 +66,7 @@ export default class RenderEngine {
   }
 
   _renderTerrain() {
-    let { pos } = this.world.me;
+    let { pos } = this.world.getMe();
     for (let i = 0; i < this.vpWidth; i++) {
       for (let j = 0; j < this.vpHeight; j++) {
         let x = i + pos.x - this.halfWidth;
@@ -78,7 +78,8 @@ export default class RenderEngine {
   }
 
   _renderAgents() {
-    let { agents, me } = this.world;
+    let { agents } = this.world;
+    let me = this.world.getMe();
     for (let a in agents) {
       let agent = agents[a];
       let tile = this.world.getTile(agent.pos.x, agent.pos.y);
@@ -101,7 +102,7 @@ export default class RenderEngine {
   }
 
   _renderPokemon() {
-    let {pos} = this.world.me;
+    let {pos} = this.world.getMe();
     for (let i = 0; i < this.vpWidth; i++) {
       for (let j = 0; j < this.vpHeight; j++) {
         let x = i + pos.x - this.halfWidth;

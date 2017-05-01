@@ -53,7 +53,7 @@ export default class World {
     for (let i = 0; i < num_cities-1; i++) {
       let c = cities[i];
       let nc = cities[i+1];
-      let pathRadius = size / 128;
+      let pathRadius = size / 64;
       let dx = nc.x - c.x;
       let dy = nc.y - c.y;
       let cx = c.x;

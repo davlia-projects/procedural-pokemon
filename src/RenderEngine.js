@@ -1,5 +1,5 @@
 const TILEMAP = {
-  '0': {x: 32, y: 304},
+  '0': {x: 0, y: 0},
   '1': {x: 16, y: 16},
   '2': {x: 48, y: 16},
   'P': {x: 7 * 16, y: 16},
@@ -7,7 +7,7 @@ const TILEMAP = {
 };
 
 const TERRAIN_TILEMAP = {
-  '0': {x: 224, y: 224},
+  '0': {x: 0, y: 0},
   'G': {x: 0, y: 2 * 16}, // grass
   'S': {x: 144, y: 48}, // snow
   'W': {x: 432, y: 112}, // water
@@ -139,7 +139,7 @@ export default class RenderEngine {
     this.ctx.drawImage(
       spriteSheet.image,
       spritePos.x, spritePos.y,
-      tileWidth, tileHeight,
+      tileWidth-1, tileHeight-1,
       canvasPosx, canvasPosy,
       canvasTileWidth, canvasTileHeight
     );

@@ -53,16 +53,15 @@ export default class RenderEngine {
     this.vpHeight = 11;
     this.halfWidth = Math.floor(this.vpWidth / 2);
     this.halfHeight = Math.floor(this.vpHeight / 2);
-    this.viewport = new Array(this.vpWidth);
-    for (let i = 0; i < this.vpWidth; i++) {
-      this.viewport[i] = new Array(this.vpHeight);
-    }
   }
 
   render() {
     this._renderTerrain();
     this._renderAgents();
     this._renderPokemon();
+    if (window.DEBUG_MODE === 1) {
+      this._renderWorld();
+    }
   }
 
   _renderTerrain() {
@@ -102,7 +101,7 @@ export default class RenderEngine {
   }
 
   _renderPokemon() {
-    let {pos} = this.world.getMe();
+    let { pos } = this.world.getMe();
     for (let i = 0; i < this.vpWidth; i++) {
       for (let j = 0; j < this.vpHeight; j++) {
         let x = i + pos.x - this.halfWidth;
@@ -113,6 +112,31 @@ export default class RenderEngine {
         }
       }
     }
+  }
+
+  _renderWorld() {
+    let { pos } = this.world.getMe();
+    let { grid } = this.world.grid;
+    let tmpCanvas = this.canvas;
+    let tmpCtx = this.ctx;
+    this.canvas = window.debugCanvas;
+    this.ctx = window.debugCanvas.getContext('2d');
+    this.vpWidth = window.debugCanvas.width;
+    this.vpHeight = window.debugCanvas.height;
+    this.halfWidth = Math.floor(this.vpWidth / 2);
+    this.halfHeight = Math.floor(this.vpHeight / 2);
+    for (let i = 0; i < this.world.size; i++) {
+      for (let j = 0; j < this.world.size; j++) {
+        let tile = this.world.getTile(i, j);
+        this.drawTile(tile.symbol, 'terrain', i, j);
+      }
+    }
+    this.vpWidth = 15;
+    this.vpHeight = 11;
+    this.halfWidth = Math.floor(this.vpWidth / 2);
+    this.halfHeight = Math.floor(this.vpHeight / 2);
+    this.canvas = tmpCanvas;
+    this.ctx = tmpCtx;
   }
 
   drawTile(tile, type, x, y) {

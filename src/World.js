@@ -37,28 +37,16 @@ export default class World {
       }
     }
 
-    // make nodes 
+    // init city positions 
     let cities = [];
     let num_cities = 10; // TODO: parameterize later
     for (let i = 0; i < num_cities; i++) {
       let x = Math.floor(util.random() * size);
       let y = Math.floor(util.random() * size);
-      let rx = Math.floor(util.random() * size / 16 + size / 16);
-      let ry = Math.floor(util.random() * size / 16 + size / 16);
+      let rx = Math.floor(util.random() * size / 8 + size / 16);
+      let ry = Math.floor(util.random() * size / 8 + size / 16);
       let city = {x, y, rx, ry}; 
       cities.push(city);
-    }
-
-    // draw cities
-    for (let c = 0; c < num_cities; c++) {
-      let city = cities[c];
-      for (let i = Math.floor(city.x - city.rx/2.0); i < city.x + city.rx/2.0; i++) {
-        for (let j = Math.floor(city.y - city.ry/2.0); j < city.y + city.ry/2.0; j++) {
-          if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
-            this.grid[i][j] = new Tile('G', true);
-          }
-        }
-      }
     }
 
     // connect nodes
@@ -66,10 +54,7 @@ export default class World {
       let c = cities[i];
       let nc = cities[i+1];
 
-      let pathRadius = size / 64;
-
-
-
+      let pathRadius = size / 128;
       let dx = nc.x - c.x;
       let dy = nc.y - c.y;
       let cx = c.x;
@@ -87,6 +72,18 @@ export default class World {
         for (let j = -pathRadius; j < pathRadius; j++) {
           if (0 <= cx + j && cx + j < this.size) {
             this.grid[cx + j][cy] = new Tile('F', true);
+          }
+        }
+      }
+    }
+
+    // draw cities
+    for (let c = 0; c < num_cities; c++) {
+      let city = cities[c];
+      for (let i = Math.floor(city.x - city.rx/2.0); i < city.x + city.rx/2.0; i++) {
+        for (let j = Math.floor(city.y - city.ry/2.0); j < city.y + city.ry/2.0; j++) {
+          if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
+            this.grid[i][j] = new Tile('G', true);
           }
         }
       }

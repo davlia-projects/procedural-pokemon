@@ -18,7 +18,7 @@ type Controller struct {
 // NewController creates a new controller
 func NewController() Controller {
 	w := World{
-		Size:   1024,
+		Size:   512,
 		Seed:   0,
 		Agents: map[int32]Agent{},
 	}

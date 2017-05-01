@@ -33,7 +33,7 @@ export default class World {
     /// REWRITE
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
-        this.grid[i][j] = new Tile('0', true);
+        this.grid[i][j] = new Tile('0', false);
       }
     }
 
@@ -43,18 +43,18 @@ export default class World {
     for (let i = 0; i < num_cities; i++) {
       let x = Math.floor(util.random() * size);
       let y = Math.floor(util.random() * size);
-      let rx = Math.floor(util.random() * size / 32 + size / 32.0);
-      let ry = Math.floor(util.random() * size / 32 + size / 32.0);
+      let rx = Math.floor(util.random() * size / 16 + size / 16);
+      let ry = Math.floor(util.random() * size / 16 + size / 16);
       let city = {x, y, rx, ry}; 
       cities.push(city);
     }
-    window.x = this;
+
     // draw cities
     for (let c = 0; c < num_cities; c++) {
       let city = cities[c];
       for (let i = Math.floor(city.x - city.rx/2.0); i < city.x + city.rx/2.0; i++) {
         for (let j = Math.floor(city.y - city.ry/2.0); j < city.y + city.ry/2.0; j++) {
-          if (0 <= x  && x < this.size && 0 <= y && y < this.size) {
+          if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
             this.grid[i][j] = new Tile('G', true);
           }
         }
@@ -63,30 +63,31 @@ export default class World {
 
     // connect nodes
     for (let i = 0; i < num_cities-1; i++) {
-      let city_1 = cities[i];
-      let city_2 = cities[i+1];
-      // connect centers by doing modified DFS from one center to the other
-      
-      let stack = [];
-      stack.push({x: city_1.x, y: city_1.y});
-      while (stack) {
-        let pos = stack.shift();
-        // grab this tile and color it
-        this.grid[pos.x][pos.y] = new Tile('F', true);
-        let d = {x: city_2.x - pos.x, y: city_2.y - pos.y};
-        if (d.x === 0 && d.y === 0) {
-          break;
+      let c = cities[i];
+      let nc = cities[i+1];
+
+      let pathRadius = size / 64;
+
+
+
+      let dx = nc.x - c.x;
+      let dy = nc.y - c.y;
+      let cx = c.x;
+      let cy = c.y;
+      for (let i = 0; i < Math.abs(dx); i++) {
+        cx += Math.sign(dx);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= cy + j && cy + j < this.size) {
+            this.grid[cx][cy + j] = new Tile('F', true);
+          }
         }
-        let rand = util.random();
-        if (rand < 0.5) {
-          // go in x
-          let new_x = pos.x + Math.sign(d.x) * 1;
-          stack.push({x: new_x, y: pos.y});
-        }
-        else {
-          // go in y
-          let new_y = pos.y + Math.sign(d.y) * 1;
-          stack.push({x: pos.x, y: new_y});
+      }
+      for (let i = 0; i < Math.abs(dy); i++) {
+        cy += Math.sign(dy);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= cx + j && cx + j < this.size) {
+            this.grid[cx + j][cy] = new Tile('F', true);
+          }
         }
       }
     }
@@ -148,6 +149,8 @@ export default class World {
 
   /// END REWRITE
 }
+  
+
   // TODO: should we differentiate between agent types? :thinking:
   addAgents(agents) {
     agents.forEach(a => {
@@ -172,11 +175,11 @@ export default class World {
   }
 
   resetGrid() {
-    for (let i = 0; i < this.size; i++) {
-      for (let j = 0; j < this.size; j++) {
-        this.grid[i][j].hasPlayer = false;
-      }
-    }
+    // for (let i = 0; i < this.size; i++) {
+    //   for (let j = 0; j < this.size; j++) {
+    //     this.grid[i][j].hasPlayer = false;
+    //   }
+    // }
   }
 
   randomPokemon(i, j, region) {

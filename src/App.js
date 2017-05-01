@@ -1,5 +1,4 @@
 import World from './World.js'
-import Player from './Player.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
@@ -38,27 +37,27 @@ export default class App {
 
   setupEventListeners() {
     window.addEventListener('keydown', (event) => {
-      let { me } = this.world;
+      let me = this.world.getMe();
       switch (event.keyCode) {
         case 32:
           break;
         case 37:
-          me.move("left", this.world);
+          me.move('left', this.world);
           break;
         case 38:
-          me.move("up", this.world);
+          me.move('up', this.world);
           break;
         case 39:
-          me.move("right", this.world);
+          me.move('right', this.world);
           break;
         case 40:
-          me.move("down", this.world);
+          me.move('down', this.world);
           break;
       }
-      this.sendEvent('sync', {
+      this.sendEvent('update', {
         message: 'syncing shit',
-        game: {
-          world: this.world.serialize()
+        update: {
+          delta: [me]
         }
       });
       this.re.render();
@@ -112,10 +111,16 @@ export default class App {
     switch (type) {
       case 'init':
         this.clientID = id;
-        this.world.initWorld(data.game.world, id);
+        this.world.initWorld(data.init.world, id);
         break;
-      case 'sync':
-        this.world.syncPlayers(data.game.world.players, id);
+      case 'add':
+        this.world.addAgents(data.update.add);
+        break;
+      case 'update':
+        this.world.updateAgents(data.update.delta);
+        break;
+      case 'delete':
+        this.world.deleteAgents(data.update.delete);
         break;
       default:
         console.log('event not handled', e.data);

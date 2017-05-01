@@ -61,12 +61,12 @@ export default class RenderEngine {
 
   render() {
     this._renderTerrain();
-    this._renderCharacters();
+    this._renderAgents();
     this._renderPokemon();
   }
 
   _renderTerrain() {
-    let { pos } = this.world.me;
+    let { pos } = this.world.getMe();
     for (let i = 0; i < this.vpWidth; i++) {
       for (let j = 0; j < this.vpHeight; j++) {
         let x = i + pos.x - this.halfWidth;
@@ -77,13 +77,14 @@ export default class RenderEngine {
     }
   }
 
-  _renderCharacters() {
-    let { players, me } = this.world;
-    for (let p in players) {
-      let player = players[p];
-      let tile = this.world.getTile(player.pos.x, player.pos.y);
-      let sprite = player.spriteID;
-      switch (player.dir) {
+  _renderAgents() {
+    let { agents } = this.world;
+    let me = this.world.getMe();
+    for (let a in agents) {
+      let agent = agents[a];
+      let tile = this.world.getTile(agent.pos.x, agent.pos.y);
+      let sprite = agent.spriteID;
+      switch (agent.dir) {
         case 'right':
           sprite += '1';
           break;
@@ -96,12 +97,12 @@ export default class RenderEngine {
         default:
           sprite += '0';
       }
-      this.drawTile(sprite, 'player', player.pos.x - me.pos.x + this.halfWidth, player.pos.y - me.pos.y + this.halfHeight);
+      this.drawTile(sprite, 'agent', agent.pos.x - me.pos.x + this.halfWidth, agent.pos.y - me.pos.y + this.halfHeight);
     }
   }
 
   _renderPokemon() {
-    let {pos} = this.world.me;
+    let {pos} = this.world.getMe();
     for (let i = 0; i < this.vpWidth; i++) {
       for (let j = 0; j < this.vpHeight; j++) {
         let x = i + pos.x - this.halfWidth;
@@ -117,7 +118,7 @@ export default class RenderEngine {
   drawTile(tile, type, x, y) {
     let spritePos, spriteSheet;
     switch (type) {
-      case 'player':
+      case 'agent':
         spritePos = CHARACTER_TILEMAP[tile];
         spriteSheet = this.playerSprite;
         break;

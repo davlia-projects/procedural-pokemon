@@ -1,11 +1,10 @@
 import Tile from './Tile.js'
-import Player from './Player.js'
+import Agent from './Agent.js'
 import { util } from './Util.js'
 
 export default class World {
   constructor() {
-    this.players = {};
-    this.me = new Player({x: 0, y: 0}, -1);
+    this.agents = {};
   }
 
   getTile(x, y) {
@@ -16,16 +15,13 @@ export default class World {
     }
   }
 
-  initWorld(world, id) {
-    let { players, size, seed } = world;
-    players.forEach(p => {
-      if (p.id === id) {
-        this.me.update(p);
-        this.players[p.id] = this.me;
-      } else {
-        this.players[p.id] = p;
-      }
-    });
+  initWorld(world, myID) {
+    let { agents, size, seed } = world;
+    this.me = myID;
+    for (let id in agents) {
+      let agentID = parseInt(id);
+      this.agents[agentID] = new Agent(agents[id]);
+    }
 
     util.seed(seed);
     this.size = size;
@@ -89,16 +85,27 @@ export default class World {
     }
   }
 
-  syncPlayers(players, id) {
-    // TODO: eliminate sync race condition serverside :(
-    this.players = {};
-    players.forEach(p => {
-      if (p.id === id) {
-        return;
-      }
-      this.players[p.id] = p;
+  // TODO: should we differentiate between agent types? :thinking:
+  addAgents(agents) {
+    agents.forEach(a => {
+      this.agents[a.id] = new Agent(a);
     });
-    this.players[this.me.id] = this.me;
+  }
+
+  updateAgents(agents) {
+    agents.forEach(a => {
+      this.agents[a.id].update(a);
+    });
+  }
+
+  deleteAgents(agents) {
+    agents.forEach(a => {
+      delete this.agents[a.id];
+    });
+  }
+
+  getMe() {
+    return this.agents[this.me];
   }
 
   resetGrid() {
@@ -144,12 +151,12 @@ export default class World {
   }
 
   serialize() {
-    let players = [];
-    for (let p in this.players) {
-      players.push(this.players[p]);
+    let agents = [];
+    for (let p in this.agents) {
+      agents.push(this.agents[p]);
     }
     return {
-      players: players,
+      agents: agents,
       size: this.size,
       seed: this.seed
     };

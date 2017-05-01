@@ -1,11 +1,11 @@
 import Tile from './Tile.js'
-import Player from './Player.js'
+import Agent from './Agent.js'
 import { util } from './Util.js'
 
 export default class World {
   constructor() {
     this.agents = {};
-    this.me = new Player({x: 0, y: 0}, -1);
+    this.me = new Agent({x: 0, y: 0}, -1);
   }
 
   getTile(x, y) {
@@ -16,16 +16,16 @@ export default class World {
     }
   }
 
-  initWorld(world, id) {
-    let { players, size, seed } = world;
-    players.forEach(p => {
-      if (p.id === id) {
-        this.me.update(p);
-        this.agents[p.id] = this.me;
+  initWorld(world, myID) {
+    let { agents, size, seed } = world;
+    for (let agentID in agents) {
+      if (agentID === myID) {
+        this.me.update(agents[myID]);
+        this.agents[myID] = this.me;
       } else {
-        this.agents[p.id] = p;
+        this.agents[myID] = agents[agentID]
       }
-    });
+    }
 
     util.seed(seed);
     this.size = size;
@@ -151,12 +151,12 @@ export default class World {
   }
 
   serialize() {
-    let players = [];
-    for (let p in this.players) {
-      players.push(this.players[p]);
+    let agents = [];
+    for (let p in this.agents) {
+      agents.push(this.agents[p]);
     }
     return {
-      players: players,
+      agents: agents,
       size: this.size,
       seed: this.seed
     };

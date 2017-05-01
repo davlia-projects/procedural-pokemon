@@ -1,5 +1,4 @@
 import World from './World.js'
-import Player from './Player.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
@@ -112,7 +111,7 @@ export default class App {
     switch (type) {
       case 'init':
         this.clientID = id;
-        this.world.initWorld(data.game.world, id);
+        this.world.initWorld(data.init.world, id);
         break;
       case 'add':
         this.world.addAgents(data.update.add);

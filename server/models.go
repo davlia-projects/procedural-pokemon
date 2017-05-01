@@ -22,8 +22,10 @@ type Data struct {
 
 // Player encapsulates data for users
 type Player struct {
-	Pos Point `json:"pos"`
-	ID  int32 `json:"id"`
+	Pos      Point  `json:"pos"`
+	ID       int32  `json:"id"`
+	SpriteID string `json:"spriteID"`
+	Dir      string `json:"dir"`
 }
 
 // World encapsulates data for the world state

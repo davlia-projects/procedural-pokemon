@@ -2,8 +2,10 @@ package main
 
 func (C *Controller) handleInit(msg InboundMessage) {
 	p := Player{
-		Pos: Point{X: 10, Y: 10},
-		ID:  msg.Sender,
+		Pos:      Point{X: 15, Y: 15}, // Default spawn location is 10, 10 for now. We can change this later -- David
+		ID:       msg.Sender,
+		SpriteID: "F",
+		Dir:      "down",
 	}
 	players := C.Game.World.Players
 	players = append(players, p)

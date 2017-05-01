@@ -32,6 +32,13 @@ const POKE_TILEMAP = {
   'i1': {x: 18 * 64, y: 5 * 64}
 };
 
+const CHARACTER_TILEMAP = {
+  'F0': {x: 0, y: 0},
+  'F1': {x: 25, y: 0},
+  'F2': {x: 50, y: 0},
+  'F3': {x: 75, y: 0},
+};
+
 export default class RenderEngine {
   constructor(canvas, ts, pls, pks, world) {
     // canvas is 960 x 640
@@ -71,12 +78,25 @@ export default class RenderEngine {
   }
 
   _renderCharacters() {
-    let { players } = this.world;
+    let { players, me } = this.world;
     for (let p in players) {
       let player = players[p];
       let tile = this.world.getTile(player.pos.x, player.pos.y);
-      let { me } = this.world;
-      this.drawTile(null, 'player', player.pos.x - me.pos.x + this.halfWidth, player.pos.y - me.pos.y + this.halfHeight);
+      let sprite = player.spriteID;
+      switch (player.dir) {
+        case 'right':
+          sprite += '1';
+          break;
+        case 'up':
+          sprite += '2';
+          break;
+        case 'left':
+          sprite += '3';
+          break;
+        default:
+          sprite += '0';
+      }
+      this.drawTile(sprite, 'player', player.pos.x - me.pos.x + this.halfWidth, player.pos.y - me.pos.y + this.halfHeight);
     }
   }
 
@@ -95,28 +115,28 @@ export default class RenderEngine {
   }
 
   drawTile(tile, type, x, y) {
-    let spritePos, sprite;
+    let spritePos, spriteSheet;
     switch (type) {
       case 'player':
-        spritePos = {x: 82, y: 125};
-        sprite = this.playerSprite;
+        spritePos = CHARACTER_TILEMAP[tile];
+        spriteSheet = this.playerSprite;
         break;
       case 'terrain':
         spritePos = TERRAIN_TILEMAP[tile];
-        sprite = this.terrainSprite;
+        spriteSheet = this.terrainSprite;
         break;
       case 'pokemon':
         spritePos = POKE_TILEMAP[tile];
-        sprite = this.pokemonSprite;
+        spriteSheet = this.pokemonSprite;
         break;
     }
-    let { tileHeight, tileWidth } = sprite;
+    let { tileHeight, tileWidth } = spriteSheet;
     let canvasTileWidth = this.canvas.width / this.vpWidth;
     let canvasTileHeight = this.canvas.height / this.vpHeight;
     let canvasPosx = x * canvasTileWidth;
     let canvasPosy = y * canvasTileHeight;
     this.ctx.drawImage(
-      sprite.image,
+      spriteSheet.image,
       spritePos.x, spritePos.y,
       tileWidth, tileHeight,
       canvasPosx, canvasPosy,

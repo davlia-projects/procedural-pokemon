@@ -30,14 +30,13 @@ export default class World {
       this.grid[i] = new Array(size);
     }
 
-    /// REWRITE
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < size; j++) {
         this.grid[i][j] = new Tile('0', false);
       }
     }
 
-    // init city positions 
+    // init city positions
     let cities = [];
     let num_cities = 10; // TODO: parameterize later
     for (let i = 0; i < num_cities; i++) {
@@ -45,7 +44,7 @@ export default class World {
       let y = Math.floor(util.random() * size);
       let rx = Math.floor(util.random() * size / 8 + size / 16);
       let ry = Math.floor(util.random() * size / 8 + size / 16);
-      let city = {x, y, rx, ry}; 
+      let city = {x, y, rx, ry};
       cities.push(city);
     }
 
@@ -88,65 +87,11 @@ export default class World {
         }
       }
     }
+  }
 
-  //   // generate four regions
-  //   // top-left: grassy plains
-  //   for (let i = 0; i < size / 2.0; i++) {
-  //     for (let j = 0; j < size / 2.0; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.75) {
-  //         this.grid[i][j] = new Tile('G', true);
-  //         this.randomPokemon(i, j, 'grass') // can also not add a pokemon
-  //       } else if (rand < 0.9) {
-  //         this.grid[i][j] = new Tile('F', true);
-  //       } else if (rand < 0.95) {
-  //         this.grid[i][j] = new Tile('B', false);
-  //       } else {
-  //         this.grid[i][j] = new Tile('F2', true);
-  //       }
-  //     }
-  //   }
-  //   // top-right: snow region
-  //   for (let i = size / 2.0; i < size; i++) {
-  //     for (let j = 0; j < size / 2.0; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.8) {
-  //         this.grid[i][j] = new Tile('S', true);
-  //         this.randomPokemon(i, j, 'snow') // can also not add a pokemon
-  //       } else {
-  //         this.grid[i][j] = new Tile('SB', false);
-  //       }
-  //     }
-  //   }
-  //   // bottom-left: desert rocky area
-  //   for (let i = 0; i < size; i++) {
-  //     for (let j = size / 2.0; j < size; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.8) {
-  //         this.grid[i][j] = new Tile('D', true);
-  //         this.randomPokemon(i, j, 'sand') // can also not add a pokemon
-  //       } else {
-  //         this.grid[i][j] = new Tile('DR', false);
-  //       }
-  //     }
-  //   }
-  //   // bottom-right: water region
-  //   for (let i = size / 2.0; i < size; i++) {
-  //     for (let j = size / 2.0; j < size; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.8) {
-  //         this.grid[i][j] = new Tile('W', true);
-  //         this.randomPokemon(i, j, 'water') // can also not add a pokemon
-  //       } else {
-  //         this.grid[i][j] = new Tile('WR', false);
-  //       }
-  //     }
-  //   }
-  // }
-
-  /// END REWRITE
-}
-  
+  genCities() {
+    
+  }
 
   // TODO: should we differentiate between agent types? :thinking:
   addAgents(agents) {

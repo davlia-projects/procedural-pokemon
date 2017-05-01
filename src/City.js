@@ -7,8 +7,4 @@ export default class City {
 		this.pokemart = pokemart;
 		this.pokecenter = pokecenter;
 	}
-
-  genCity(grid) {
-
-  }
 }

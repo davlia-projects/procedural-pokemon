@@ -3,8 +3,8 @@ import Structure from './Structure.js'
 import { util } from './Util.js'
 
 
-export default class City {
-	constructor(x, y, rx, ry, biome, numHouses, pokemart, pokecenter) {
+export default class Area {
+	constructor(x, y, rx, ry, biome, house_cnt, pokemart, pokecenter) {
 		this.x = x;
 		this.y = y;
 		this.rx = rx;
@@ -14,6 +14,7 @@ export default class City {
 		this.pokemart = pokemart;
 		this.pokecenter = pokecenter;
 		this.structures = [];
+		this.neighbors = [];
 	}
 
 	init(grid) {
@@ -53,6 +54,5 @@ export default class City {
 	}
 
 	genHouse(grid) {
-
 	}
 }

@@ -4,17 +4,19 @@ import { util } from './Util.js'
 
 
 export default class Area {
-	constructor(x, y, rx, ry, biome, numHouses, pokemart, pokecenter) {
+	constructor(x, y, rx, ry, numHouses, pokemart, pokecenter) {
 		this.x = x;
 		this.y = y;
 		this.rx = rx;
 		this.ry = ry;
-		this.biome = biome;
 		this.numHouses = numHouses;
 		this.pokemart = pokemart;
 		this.pokecenter = pokecenter;
 		this.structures = [];
 		this.neighbors = [];
+		this.nsOutlet = undefined;
+		this.ewOutlet = undefined;
+		this.biome = undefined;
 	}
 
 	init(grid) {

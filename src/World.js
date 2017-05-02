@@ -27,7 +27,7 @@ export default class World {
       return 'sand';
     }
     else {
-      return 'town';
+      return 'grass';
     }
   }
 
@@ -81,7 +81,6 @@ export default class World {
       let cx = c.x;
       let cy = c.y;
       let randomOrder = util.random();
-      console.log(randomOrder);
       if (randomOrder > 0.80) {
         for (let i = 0; i < Math.abs(dx); i++) {
           cx += Math.sign(dx);
@@ -124,8 +123,8 @@ export default class World {
     // draw cities
     for (let c = 0; c < num_cities; c++) {
       let city = cities[c];
-      for (let i = Math.floor(city.pos.x - city.rad.x/2.0); i < city.pos.x + city.rad.x/2.0; i++) {
-        for (let j = Math.floor(city.pos.y - city.rad.y/2.0); j < city.pos.y + city.rad.y/2.0; j++) {
+      for (let i = Math.floor(city.x - city.rx/2.0); i < city.x + city.rx/2.0; i++) {
+        for (let j = Math.floor(city.y - city.ry/2.0); j < city.y + city.ry/2.0; j++) {
           if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
             this.grid[i][j] = new Tile(city.biome, true);
           }
@@ -134,7 +133,7 @@ export default class World {
     }
 
     cities.forEach(city => {
-      city.init(this.grid);
+      // city.init(this.grid);
     });
   }
 

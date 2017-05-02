@@ -1,9 +1,10 @@
 import Tile from './Tile.js'
+import Structure from './Structure.js'
 import { util } from './Util.js'
 
 
 export default class City {
-	constructor(x, y, rx, ry, biome, house_cnt, pokemart, pokecenter) {
+	constructor(x, y, rx, ry, biome, numHouses, pokemart, pokecenter) {
 		this.x = x;
 		this.y = y;
 		this.rx = rx;
@@ -12,32 +13,46 @@ export default class City {
 		this.numHouses = numHouses;
 		this.pokemart = pokemart;
 		this.pokecenter = pokecenter;
+		this.structures = [];
 	}
 
 	init(grid) {
-		// sample disk
 		if (this.pokecenter) {
-			let {px, py} = util.randomDisk(this.rad.x / 2, this.rad.y / 2);
-			let sizeRand = util.random();
-			if (sizeRand < 1) {
-				// create 5x5 pokecenter
-				for (let i = 0; i < 5; i++) {
-					for (let j = 0; j < 5; j++) {
-						let x = Math.floor(this.pos.x + px + i - 2);
-						let y = Math.floor(this.pos.y + py + j - 2);
-						grid[x][y] = new Tile(`PC${i}${j}`, false);
-					}
-				}
-			} else {
-				// create 7x5 pokecenter
-				for (let i = 0; i < 7; i++) {
-					for (let j = 0; j < 5; j++) {
-						let x = Math.floor(this.pos.x + px + i - 3);
-						let y = Math.floor(this.pos.y + py + j - 2);
-						grid[x][y] = new Tile(`PCB${i}${j}`, false);
-					}
-				}
-			}
+			this.genPokecenter(grid);
 		}
+		if (this.pokemart) {
+			this.genPokemart(grid);
+		}
+		for (let i = 0; i < this.numHouses; i++) {
+			this.genHouse(grid);
+		}
+	}
+
+	genPokecenter(grid) {
+		let structure;
+		let { px, py } = util.randomDisk(this.rx / 2, this.ry / 2);
+		let sizeRand = util.random();
+		if (sizeRand < 0.75) {
+			structure = new Structure('PC', px, py, 5, 5).init();
+		} else {
+			structure = new Structure('BPC', px, py, 5, 7).init();
+		}
+		this.structures.push(structure);
+	}
+
+	genPokemart(grid) {
+		let structure;
+		let { px, py } = util.randomDisk(this.rx / 2, this.ry / 2);
+		let sizeRand = util.random();
+		if (sizeRand < 0.75) {
+			structure = new Structure('PM', px, py, 5, 5).init();
+		} else {
+			structure = new Structure('BPM', px, py, 5, 7).init();
+		}
+		this.structures.push(structure);
+	}
+
+	genHouse(grid) {
+
 	}
 }

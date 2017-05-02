@@ -1,44 +1,5 @@
-const TILEMAP = {
-  '0': {x: 0, y: 0},
-  '1': {x: 16, y: 16},
-  '2': {x: 48, y: 16},
-  'P': {x: 7 * 16, y: 16},
-  'O': {x: 6 * 16, y: 2 * 16}
-};
-
-const TERRAIN_TILEMAP = {
-  '0': {x: 0, y: 0},
-  'grass': {x: 0, y: 2 * 16}, // grass
-  'snow': {x: 144, y: 48}, // snow
-  'water': {x: 432, y: 112}, // water
-  'DR': {x: 64, y: 224}, // dirt rock
-  'F': {x:0, y: 9 * 16}, // flower
-  'B': {x:16, y: 128}, // bush
-  'F2': {x:16, y: 192}, // more flowers
-  'sand': {x: 721, y: 48}, // sand
-  'SB': {x: 192, y: 112}, // snow bush
-  'WR': {x: 416, y: 128}, // water rock
-  'PC00': {x: 416, y: 384},
-  // more to come...
-};
-
-const POKE_TILEMAP = {
-  'g1': {x: 0, y: 0},
-  'g2': {x: 64, y: 384},
-  'g3': {x: 384, y: 448},
-  's1': {x: 192, y: 0},
-  's2': {x: 192, y: 256},
-  's3': {x: 192, y: 768},
-  'w1': {x: 192, y: 320},
-  'i1': {x: 18 * 64, y: 5 * 64}
-};
-
-const CHARACTER_TILEMAP = {
-  'F0': {x: 0, y: 0},
-  'F1': {x: 25, y: 0},
-  'F2': {x: 50, y: 0},
-  'F3': {x: 75, y: 0},
-};
+import Tile from './Tile.js'
+import Sprite, { TERRAIN_TILEMAP, POKE_TILEMAP, CHARACTER_TILEMAP } from './Sprite.js'
 
 export default class RenderEngine {
   constructor(canvas, ts, pls, pks, world) {
@@ -81,20 +42,20 @@ export default class RenderEngine {
     let me = this.world.getMe();
     for (let a in agents) {
       let agent = agents[a];
-      let tile = this.world.getTile(agent.pos.x, agent.pos.y);
-      let sprite = agent.spriteID;
+      let tile = new Tile(agent.spriteID, true);
+      tile.spriteID = agent.spriteID;
       switch (agent.dir) {
         case 'right':
-          sprite += '1';
+          tile.offx = 1;
           break;
         case 'up':
-          sprite += '2';
+          tile.offx = 2;
           break;
         case 'left':
-          sprite += '3';
+          tile.offx = 3;
           break;
         default:
-          sprite += '0';
+          tile.offx = 0;
       }
       this.drawTile(tile, 'agent', agent.pos.x - me.pos.x + this.halfWidth, agent.pos.y - me.pos.y + this.halfHeight);
     }
@@ -104,15 +65,15 @@ export default class RenderEngine {
     let spritePos, spriteSheet;
     switch (type) {
       case 'agent':
-        spritePos = CHARACTER_TILEMAP[tile];
+        spritePos = CHARACTER_TILEMAP[tile.spriteID];
         spriteSheet = this.playerSprite;
         break;
       case 'terrain':
-        spritePos = TERRAIN_TILEMAP[tile];
+        spritePos = TERRAIN_TILEMAP[tile.spriteID];
         spriteSheet = this.terrainSprite;
         break;
       case 'pokemon':
-        spritePos = POKE_TILEMAP[tile];
+        spritePos = POKE_TILEMAP[tile.spriteID];
         spriteSheet = this.pokemonSprite;
         break;
     }
@@ -121,11 +82,11 @@ export default class RenderEngine {
     let canvasTileHeight = this.canvas.height / this.vpHeight;
     let canvasPosx = x * canvasTileWidth;
     let canvasPosy = y * canvasTileHeight;
-    let sx = spritePos.x + tile.offx;
-    let sy = spritePos.y + tile.offy;
+    let sx = spritePos.x + tile.offx * tileWidth;
+    let sy = spritePos.y + tile.offy * tileHeight;
     this.ctx.drawImage(
       spriteSheet.image,
-      spritePos.x, spritePos.y,
+      sx, sy,
       tileWidth, tileHeight,
       canvasPosx, canvasPosy,
       canvasTileWidth, canvasTileHeight
@@ -147,7 +108,7 @@ export default class RenderEngine {
     for (let i = 0; i < this.world.size; i++) {
       for (let j = 0; j < this.world.size; j++) {
         let tile = this.world.getTile(i, j);
-        this.drawTile(tile.symbol, 'terrain', i, j);
+        this.drawTile(tile, 'terrain', i, j);
       }
     }
     this.debugRendered = true;

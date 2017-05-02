@@ -17,7 +17,32 @@ const TERRAIN_TILEMAP = {
   'F2': {x:16, y: 192}, // more flowers
   'D': {x: 721, y: 48}, // sand
   'SB': {x: 192, y: 112}, // snow bush
-  'WR': {x: 416, y: 128} // water rock
+  'WR': {x: 416, y: 128}, // water rock
+  'PC00': {x: 416, y: 384},
+  'PC01': {x: 416, y: 384},
+  'PC02': {x: 416, y: 384},
+  'PC03': {x: 416, y: 384},
+  'PC04': {x: 416, y: 384},
+  'PC10': {x: 416, y: 384},
+  'PC11': {x: 416, y: 384},
+  'PC12': {x: 416, y: 384},
+  'PC13': {x: 416, y: 384},
+  'PC14': {x: 416, y: 384},
+  'PC20': {x: 416, y: 384},
+  'PC21': {x: 416, y: 384},
+  'PC22': {x: 416, y: 384},
+  'PC23': {x: 416, y: 384},
+  'PC24': {x: 416, y: 384},
+  'PC30': {x: 416, y: 384},
+  'PC31': {x: 416, y: 384},
+  'PC32': {x: 416, y: 384},
+  'PC33': {x: 416, y: 384},
+  'PC34': {x: 416, y: 384},
+  'PC40': {x: 416, y: 384},
+  'PC41': {x: 416, y: 384},
+  'PC42': {x: 416, y: 384},
+  'PC43': {x: 416, y: 384},
+  'PC44': {x: 416, y: 384},
   // more to come...
 };
 
@@ -58,8 +83,7 @@ export default class RenderEngine {
   render() {
     this._renderTerrain();
     this._renderAgents();
-    this._renderPokemon();
-    if (window.DEBUG_MODE === 1) {
+    if (window.DEBUG_MODE === 1 && !this.debugRendered) {
       this._renderWorld();
     }
   }
@@ -71,7 +95,7 @@ export default class RenderEngine {
         let x = i + pos.x - this.halfWidth;
         let y = j + pos.y - this.halfHeight;
         let tile = this.world.getTile(x, y);
-        this.drawTile(tile.symbol, 'terrain', i, j);
+        this.drawTile(tile, 'terrain', i, j);
       }
     }
   }
@@ -96,47 +120,8 @@ export default class RenderEngine {
         default:
           sprite += '0';
       }
-      this.drawTile(sprite, 'agent', agent.pos.x - me.pos.x + this.halfWidth, agent.pos.y - me.pos.y + this.halfHeight);
+      this.drawTile(tile, 'agent', agent.pos.x - me.pos.x + this.halfWidth, agent.pos.y - me.pos.y + this.halfHeight);
     }
-  }
-
-  _renderPokemon() {
-    let { pos } = this.world.getMe();
-    for (let i = 0; i < this.vpWidth; i++) {
-      for (let j = 0; j < this.vpHeight; j++) {
-        let x = i + pos.x - this.halfWidth;
-        let y = j + pos.y - this.halfHeight;
-        let tile = this.world.getTile(x, y);
-        if (tile.pokemon !== undefined) {
-          this.drawTile(tile.pokemon, 'pokemon', i, j);
-        }
-      }
-    }
-  }
-
-  _renderWorld() {
-    let { pos } = this.world.getMe();
-    let { grid } = this.world.grid;
-    let tmpCanvas = this.canvas;
-    let tmpCtx = this.ctx;
-    this.canvas = window.debugCanvas;
-    this.ctx = window.debugCanvas.getContext('2d');
-    this.vpWidth = window.debugCanvas.width;
-    this.vpHeight = window.debugCanvas.height;
-    this.halfWidth = Math.floor(this.vpWidth / 2);
-    this.halfHeight = Math.floor(this.vpHeight / 2);
-    for (let i = 0; i < this.world.size; i++) {
-      for (let j = 0; j < this.world.size; j++) {
-        let tile = this.world.getTile(i, j);
-        this.drawTile(tile.symbol, 'terrain', i, j);
-      }
-    }
-    this.vpWidth = 15;
-    this.vpHeight = 11;
-    this.halfWidth = Math.floor(this.vpWidth / 2);
-    this.halfHeight = Math.floor(this.vpHeight / 2);
-    this.canvas = tmpCanvas;
-    this.ctx = tmpCtx;
   }
 
   drawTile(tile, type, x, y) {
@@ -160,6 +145,8 @@ export default class RenderEngine {
     let canvasTileHeight = this.canvas.height / this.vpHeight;
     let canvasPosx = x * canvasTileWidth;
     let canvasPosy = y * canvasTileHeight;
+    let sx = spritePos.x + tile.offx;
+    let sy = spritePos.y + tile.offy;
     this.ctx.drawImage(
       spriteSheet.image,
       spritePos.x, spritePos.y,
@@ -167,5 +154,33 @@ export default class RenderEngine {
       canvasPosx, canvasPosy,
       canvasTileWidth, canvasTileHeight
     );
+  }
+
+  _renderWorld() {
+    // TODO: this needs to get refactored or i will cry
+    let { pos } = this.world.getMe();
+    let { grid } = this.world.grid;
+    let tmpCanvas = this.canvas;
+    let tmpCtx = this.ctx;
+    this.canvas = window.debugCanvas;
+    this.ctx = window.debugCanvas.getContext('2d');
+    this.vpWidth = window.debugCanvas.width * 2;
+    this.vpHeight = window.debugCanvas.height * 2;
+    this.halfWidth = Math.floor(this.vpWidth / 2);
+    this.halfHeight = Math.floor(this.vpHeight / 2);
+    for (let i = 0; i < this.world.size; i++) {
+      for (let j = 0; j < this.world.size; j++) {
+        let tile = this.world.getTile(i, j);
+        this.drawTile(tile.symbol, 'terrain', i, j);
+      }
+    }
+    this.debugRendered = true;
+    // reset values
+    this.vpWidth = 15;
+    this.vpHeight = 11;
+    this.halfWidth = Math.floor(this.vpWidth / 2);
+    this.halfHeight = Math.floor(this.vpHeight / 2);
+    this.canvas = tmpCanvas;
+    this.ctx = tmpCtx;
   }
 }

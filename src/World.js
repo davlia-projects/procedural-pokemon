@@ -1,5 +1,6 @@
 import Tile from './Tile.js'
 import Agent from './Agent.js'
+import City from './City.js'
 import { util } from './Util.js'
 
 export default class World {
@@ -44,7 +45,7 @@ export default class World {
       let y = Math.floor(util.random() * size);
       let rx = Math.floor(util.random() * size / 8 + size / 8);
       let ry = Math.floor(util.random() * size / 8 + size / 8);
-      let city = {x, y, rx, ry};
+      let city = new City({x, y}, 'grass', {x: rx, y: ry}, 5, true, true);
       cities.push(city);
     }
 
@@ -53,10 +54,10 @@ export default class World {
       let c = cities[i];
       let nc = cities[i+1];
       let pathRadius = size / 64;
-      let dx = nc.x - c.x;
-      let dy = nc.y - c.y;
-      let cx = c.x;
-      let cy = c.y;
+      let dx = nc.pos.x - c.pos.x;
+      let dy = nc.pos.y - c.pos.y;
+      let cx = c.pos.x;
+      let cy = c.pos.y;
       for (let i = 0; i < Math.abs(dx); i++) {
         cx += Math.sign(dx);
         for (let j = -pathRadius; j < pathRadius; j++) {
@@ -78,18 +79,18 @@ export default class World {
     // draw cities
     for (let c = 0; c < num_cities; c++) {
       let city = cities[c];
-      for (let i = Math.floor(city.x - city.rx/2.0); i < city.x + city.rx/2.0; i++) {
-        for (let j = Math.floor(city.y - city.ry/2.0); j < city.y + city.ry/2.0; j++) {
+      for (let i = Math.floor(city.pos.x - city.rad.x/2.0); i < city.pos.x + city.rad.x/2.0; i++) {
+        for (let j = Math.floor(city.pos.y - city.rad.y/2.0); j < city.pos.y + city.rad.y/2.0; j++) {
           if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
             this.grid[i][j] = new Tile('G', true);
           }
         }
       }
     }
-  }
 
-  genCities() {
-
+    cities.forEach(city => {
+      city.init(this.grid);
+    });
   }
 
   // TODO: should we differentiate between agent types? :thinking:

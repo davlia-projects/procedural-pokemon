@@ -2,7 +2,7 @@ import World from './World.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
-window.DEBUG_MODE = 0;
+window.DEBUG_MODE = 1;
 const ASSETS = './assets';
 const SERVER_URL = 'wss://davidliao.me:8000/play';
 const LOCAL_SERVER_URL = 'ws://localhost:8000/play';
@@ -19,8 +19,8 @@ export default class App {
 
     if (window.DEBUG_MODE === 1) {
       window.debugCanvas = document.createElement('canvas');
-      window.debugCanvas.width = 512;
-      window.debugCanvas.height = 512;
+      window.debugCanvas.width = 256;
+      window.debugCanvas.height = 256;
     }
   }
 
@@ -45,6 +45,8 @@ export default class App {
       let me = this.world.getMe();
       switch (event.keyCode) {
         case 32:
+          let style = window.debugCanvas.style;
+          style.visibility = style.visibility === 'visible' ? 'hidden' : 'visible';
           break;
         case 37:
           me.move('left', this.world);
@@ -72,7 +74,6 @@ export default class App {
   onLoad() {
     document.body.appendChild(this.canvas);
     if (window.DEBUG_MODE === 1) {
-      console.log(window.debugCanvas);
       document.body.appendChild(window.debugCanvas);
     }
     // TODO: turn into Promise.All instead of callback chain

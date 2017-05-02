@@ -18,6 +18,15 @@ export default class Util {
   random() {
     return (this.randInt() - 1) / 2147483646;
   }
+
+  randomDisk(rx, ry) {
+    let sqrtrx = Math.sqrt(this.random() * rx);
+    let sqrtry = Math.sqrt(this.random() * ry);
+    let theta = this.random() * 2 * Math.PI;
+    let px = sqrtrx * Math.cos(theta);
+    let py = sqrtry * Math.cos(theta);
+    return {px, py};
+  }
 }
 
 export let util = new Util();

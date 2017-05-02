@@ -74,15 +74,15 @@ export default class World {
     for (let i = 0; i < numAreas; i++) {
       let x = Math.floor(util.random() * this.size);
       let y = Math.floor(util.random() * this.size);
-      let rx = Math.floor(util.random() * this.size / 8 + this.size / 10);
-      let ry = Math.floor(util.random() * this.size / 8 + this.size / 10);
-      while (x + rx/2 > this.size - padding || x - rx/2 < padding) {
+      let sx = Math.floor(util.random() * this.size / 8 + this.size / 10);
+      let sy = Math.floor(util.random() * this.size / 8 + this.size / 10);
+      while (x + sx/2 > this.size - padding || x - sx/2 < padding) {
         x = Math.floor(util.random() * this.size);
       }
-      while (y + ry/2 > this.size - padding || y - ry/2 < padding) {
+      while (y + sy/2 > this.size - padding || y - sy/2 < padding) {
         y = Math.floor(util.random() * this.size);
       }
-      let area = new Area(x, y, rx, ry, undefined, 10, true, true);
+      let area = new Area(x, y, sx, sy, undefined, 10, true, true);
       this.areas.push(area);
     }
   }
@@ -149,8 +149,8 @@ export default class World {
     // draw cities
     for (let c = 0; c < this.areas.length; c++) {
       let area = this.areas[c];
-      for (let i = Math.floor(area.x - area.rx/2.0); i < area.x + area.rx/2.0; i++) {
-        for (let j = Math.floor(area.y - area.ry/2.0); j < area.y + area.ry/2.0; j++) {
+      for (let i = Math.floor(area.x - area.sx/2.0); i < area.x + area.sx/2.0; i++) {
+        for (let j = Math.floor(area.y - area.sy/2.0); j < area.y + area.sy/2.0; j++) {
           if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
             this.grid[i][j] = new Tile(area.biome, true);
           }

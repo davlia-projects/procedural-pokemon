@@ -21,7 +21,8 @@ export const TERRAIN_TILEMAP = {
   'H5': {x: 64 * 5, y: 544},
   'H6': {x: 400, y: 544},
   'H7': {x: 512, y: 544},
-  'R0': {x: 384, y: 48},
+  'R0': {x: 368, y: 32},
+  'R01': {x: 384, y: 0},
   // more to come...
 };
 

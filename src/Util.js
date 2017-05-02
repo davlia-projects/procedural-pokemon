@@ -56,7 +56,9 @@ export default class Util {
   /*
   Iterates integers starting from `start` and finishes at `end` inclusively
   and applies callback function `f`. The callback follows this signature:
-  f(index)
+  f(i) {
+    ...
+  }
 
   Return: undefined
   */

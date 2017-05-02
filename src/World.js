@@ -54,6 +54,7 @@ export default class World {
     this.defineAreaBiomes();
     this.connectAreaCenters();
     this.defineAreaContent();
+    this.defineCities();
 }
 
   defineNPAreas() {
@@ -159,8 +160,8 @@ export default class World {
   }
 
   defineCities() {
-    cities.forEach(city => {
-      city.init(this.grid);
+    this.areas.forEach(area => {
+      area.init(this.grid);
     });
   }
 

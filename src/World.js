@@ -1,11 +1,12 @@
 import Tile from './Tile.js'
 import Agent from './Agent.js'
-import City from './City.js'
+import Area from './Area.js'
 import { util } from './Util.js'
 
 export default class World {
   constructor() {
     this.agents = {};
+    this.areas = [];
   }
 
   getTile(x, y) {
@@ -41,49 +42,70 @@ export default class World {
 
     util.seed(seed);
     this.size = size;
+
+    // creating grid
     this.grid = new Array(size);
     for (let i = 0; i < size; i++) {
       this.grid[i] = new Array(size);
     }
 
-    /// REWRITE
-    for (let i = 0; i < size; i++) {
-      for (let j = 0; j < size; j++) {
+    // creating areas
+    this.defineNPAreas();
+    this.defineAreaCenters();
+    this.defineAreaBiomes();
+    this.connectAreaCenters();
+    this.defineAreaContent();
+}
+  
+  defineNPAreas() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
         this.grid[i][j] = new Tile('0', false);
       }
     }
+  }
 
-    // init city positions 
-    let cities = [];
-    let num_cities = size / 64; // TODO: parameterize later
-    for (let i = 0; i < num_cities; i++) {
-      let x = Math.floor(util.random() * size);
-      let y = Math.floor(util.random() * size);
-      let rx = Math.floor(util.random() * size / 8 + size / 10);
-      let ry = Math.floor(util.random() * size / 8 + size / 10);
-      let city = new City(x, y, rx, ry, undefined, 0, false, false);
-      // let city = {x, y, rx, ry};
-      cities.push(city);
+  defineAreaCenters() {
+    // init area
+    let numAreas = this.size / 64;
+
+    // edit this to change how close to the side an area can be spawn
+    let padding = 50;
+    for (let i = 0; i < numAreas; i++) {
+      let x = Math.floor(util.random() * this.size);
+      let y = Math.floor(util.random() * this.size);
+      let rx = Math.floor(util.random() * this.size / 8 + this.size / 10);
+      let ry = Math.floor(util.random() * this.size / 8 + this.size / 10);
+      while (x + rx/2 > this.size - padding || x - rx/2 < padding) {
+        x = Math.floor(util.random() * this.size);
+      }
+      while (y + ry/2 > this.size - padding || y - ry/2 < padding) {
+        y = Math.floor(util.random() * this.size);
+      }
+      let area = new Area(x, y, rx, ry, undefined, 0, false, false);
+      this.areas.push(area);
     }
+  }
 
-    for (let i = 0; i < num_cities; i++) {
+  defineAreaBiomes() {
+    for (let i = 0; i < this.areas.length; i++) {
       let rand = util.random();
-      let city = cities[i];
-      city.biome = this.getRandomBiome(rand);
+      let area = this.areas[i];
+      area.biome = this.getRandomBiome(rand);
     }
+  }
 
-
+  connectAreaCenters() {
     // connect nodes
-    for (let i = 0; i < num_cities-1; i++) {
-      let c = cities[i];
-      let nc = cities[i+1];
-      let pathRadius = size / 64;
+    for (let i = 0; i < this.areas.length-1; i++) {
+      let c = this.areas[i];
+      let nc = this.areas[i+1];
+      let pathRadius = this.size / 64;
       let dx = nc.x - c.x;
       let dy = nc.y - c.y;
       let cx = c.x;
       let cy = c.y;
       let randomOrder = util.random();
-      console.log(randomOrder);
       if (randomOrder > 0.80) {
         for (let i = 0; i < Math.abs(dx); i++) {
           cx += Math.sign(dx);
@@ -120,78 +142,22 @@ export default class World {
           }
         }
       }
-
     }
+  }
 
+  defineAreaContent() {
     // draw cities
-    for (let c = 0; c < num_cities; c++) {
-      let city = cities[c];
-      for (let i = Math.floor(city.x - city.rx/2.0); i < city.x + city.rx/2.0; i++) {
-        for (let j = Math.floor(city.y - city.ry/2.0); j < city.y + city.ry/2.0; j++) {
+    for (let c = 0; c < this.areas.length; c++) {
+      let area = this.areas[c];
+      for (let i = Math.floor(area.x - area.rx/2.0); i < area.x + area.rx/2.0; i++) {
+        for (let j = Math.floor(area.y - area.ry/2.0); j < area.y + area.ry/2.0; j++) {
           if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
-            this.grid[i][j] = new Tile(city.biome, true);
+            this.grid[i][j] = new Tile(area.biome, true);
           }
         }
       }
     }
-
-  //   // generate four regions
-  //   // top-left: grassy plains
-  //   for (let i = 0; i < size / 2.0; i++) {
-  //     for (let j = 0; j < size / 2.0; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.75) {
-  //         this.grid[i][j] = new Tile('G', true);
-  //         this.randomPokemon(i, j, 'grass') // can also not add a pokemon
-  //       } else if (rand < 0.9) {
-  //         this.grid[i][j] = new Tile('F', true);
-  //       } else if (rand < 0.95) {
-  //         this.grid[i][j] = new Tile('B', false);
-  //       } else {
-  //         this.grid[i][j] = new Tile('F2', true);
-  //       }
-  //     }
-  //   }
-  //   // top-right: snow region
-  //   for (let i = size / 2.0; i < size; i++) {
-  //     for (let j = 0; j < size / 2.0; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.8) {
-  //         this.grid[i][j] = new Tile('S', true);
-  //         this.randomPokemon(i, j, 'snow') // can also not add a pokemon
-  //       } else {
-  //         this.grid[i][j] = new Tile('SB', false);
-  //       }
-  //     }
-  //   }
-  //   // bottom-left: desert rocky area
-  //   for (let i = 0; i < size; i++) {
-  //     for (let j = size / 2.0; j < size; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.8) {
-  //         this.grid[i][j] = new Tile('D', true);
-  //         this.randomPokemon(i, j, 'sand') // can also not add a pokemon
-  //       } else {
-  //         this.grid[i][j] = new Tile('DR', false);
-  //       }
-  //     }
-  //   }
-  //   // bottom-right: water region
-  //   for (let i = size / 2.0; i < size; i++) {
-  //     for (let j = size / 2.0; j < size; j++) {
-  //       let rand = util.random();
-  //       if (rand < 0.8) {
-  //         this.grid[i][j] = new Tile('W', true);
-  //         this.randomPokemon(i, j, 'water') // can also not add a pokemon
-  //       } else {
-  //         this.grid[i][j] = new Tile('WR', false);
-  //       }
-  //     }
-  //   }
-  // }
-
-  /// END REWRITE
-}
+  }
   
 
   // TODO: should we differentiate between agent types? :thinking:

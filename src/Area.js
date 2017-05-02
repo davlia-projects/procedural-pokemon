@@ -5,7 +5,7 @@
 // pokemart - boolean
 // pokecenter - boolean
 
-export default class City {
+export default class Area {
 	constructor(x, y, rx, ry, biome, house_cnt, pokemart, pokecenter) {
 		this.x = x;
 		this.y = y;
@@ -15,5 +15,6 @@ export default class City {
 		this.house_count = house_cnt;
 		this.pokemart = pokemart;
 		this.pokecenter = pokecenter;
+		this.neighbors = [];
 	}
 }

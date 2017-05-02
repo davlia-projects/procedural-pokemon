@@ -8,41 +8,17 @@ const TILEMAP = {
 
 const TERRAIN_TILEMAP = {
   '0': {x: 0, y: 0},
-  'G': {x: 0, y: 2 * 16}, // grass
-  'S': {x: 144, y: 48}, // snow
-  'W': {x: 432, y: 112}, // water
+  'grass': {x: 0, y: 2 * 16}, // grass
+  'snow': {x: 144, y: 48}, // snow
+  'water': {x: 432, y: 112}, // water
   'DR': {x: 64, y: 224}, // dirt rock
   'F': {x:0, y: 9 * 16}, // flower
   'B': {x:16, y: 128}, // bush
   'F2': {x:16, y: 192}, // more flowers
-  'D': {x: 721, y: 48}, // sand
+  'sand': {x: 721, y: 48}, // sand
   'SB': {x: 192, y: 112}, // snow bush
   'WR': {x: 416, y: 128}, // water rock
   'PC00': {x: 416, y: 384},
-  'PC01': {x: 416, y: 384},
-  'PC02': {x: 416, y: 384},
-  'PC03': {x: 416, y: 384},
-  'PC04': {x: 416, y: 384},
-  'PC10': {x: 416, y: 384},
-  'PC11': {x: 416, y: 384},
-  'PC12': {x: 416, y: 384},
-  'PC13': {x: 416, y: 384},
-  'PC14': {x: 416, y: 384},
-  'PC20': {x: 416, y: 384},
-  'PC21': {x: 416, y: 384},
-  'PC22': {x: 416, y: 384},
-  'PC23': {x: 416, y: 384},
-  'PC24': {x: 416, y: 384},
-  'PC30': {x: 416, y: 384},
-  'PC31': {x: 416, y: 384},
-  'PC32': {x: 416, y: 384},
-  'PC33': {x: 416, y: 384},
-  'PC34': {x: 416, y: 384},
-  'PC40': {x: 416, y: 384},
-  'PC41': {x: 416, y: 384},
-  'PC42': {x: 416, y: 384},
-  'PC43': {x: 416, y: 384},
-  'PC44': {x: 416, y: 384},
   // more to come...
 };
 
@@ -150,7 +126,7 @@ export default class RenderEngine {
     this.ctx.drawImage(
       spriteSheet.image,
       spritePos.x, spritePos.y,
-      tileWidth-1, tileHeight-1,
+      tileWidth, tileHeight,
       canvasPosx, canvasPosy,
       canvasTileWidth, canvasTileHeight
     );

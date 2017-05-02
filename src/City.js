@@ -3,9 +3,11 @@ import { util } from './Util.js'
 
 
 export default class City {
-	constructor(pos, biome, rad, numHouses, pokemart, pokecenter) {
-		this.pos = pos;
-		this.rad = rad;
+	constructor(x, y, rx, ry, biome, house_cnt, pokemart, pokecenter) {
+		this.x = x;
+		this.y = y;
+		this.rx = rx;
+		this.ry = ry;
 		this.biome = biome;
 		this.numHouses = numHouses;
 		this.pokemart = pokemart;

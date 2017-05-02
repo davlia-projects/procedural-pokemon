@@ -1,5 +1,6 @@
 import Tile from './Tile.js'
 import Agent from './Agent.js'
+import City from './City.js'
 import { util } from './Util.js'
 
 export default class World {
@@ -12,6 +13,21 @@ export default class World {
       return this.grid[x][y];
     } else {
       return new Tile('0');
+    }
+  }
+
+  getRandomBiome(rand) {
+    if (rand < 0.25) {
+      return 'grass';
+    }
+    else if (rand < 0.50) {
+      return 'water';
+    }
+    else if (rand < 0.75) {
+      return 'sand';
+    }
+    else {
+      return 'town';
     }
   }
 
@@ -39,15 +55,23 @@ export default class World {
 
     // init city positions 
     let cities = [];
-    let num_cities = 10; // TODO: parameterize later
+    let num_cities = size / 64; // TODO: parameterize later
     for (let i = 0; i < num_cities; i++) {
       let x = Math.floor(util.random() * size);
       let y = Math.floor(util.random() * size);
-      let rx = Math.floor(util.random() * size / 8 + size / 8);
-      let ry = Math.floor(util.random() * size / 8 + size / 8);
-      let city = {x, y, rx, ry}; 
+      let rx = Math.floor(util.random() * size / 8 + size / 10);
+      let ry = Math.floor(util.random() * size / 8 + size / 10);
+      let city = new City(x, y, rx, ry, undefined, 0, false, false);
+      // let city = {x, y, rx, ry};
       cities.push(city);
     }
+
+    for (let i = 0; i < num_cities; i++) {
+      let rand = util.random();
+      let city = cities[i];
+      city.biome = this.getRandomBiome(rand);
+    }
+
 
     // connect nodes
     for (let i = 0; i < num_cities-1; i++) {
@@ -58,22 +82,45 @@ export default class World {
       let dy = nc.y - c.y;
       let cx = c.x;
       let cy = c.y;
-      for (let i = 0; i < Math.abs(dx); i++) {
-        cx += Math.sign(dx);
-        for (let j = -pathRadius; j < pathRadius; j++) {
-          if (0 <= cy + j && cy + j < this.size) {
-            this.grid[cx][cy + j] = new Tile('F', true);
+      let randomOrder = util.random();
+      console.log(randomOrder);
+      if (randomOrder > 0.80) {
+        for (let i = 0; i < Math.abs(dx); i++) {
+          cx += Math.sign(dx);
+          for (let j = -pathRadius; j < pathRadius; j++) {
+            if (0 <= cy + j && cy + j < this.size) {
+              this.grid[cx][cy + j] = new Tile(c.biome, true);
+            }
+          }
+        }
+        for (let i = 0; i < Math.abs(dy); i++) {
+          cy += Math.sign(dy);
+          for (let j = -pathRadius; j < pathRadius; j++) {
+            if (0 <= cx + j && cx + j < this.size) {
+              this.grid[cx + j][cy] = new Tile(nc.biome, true);
+            }
           }
         }
       }
-      for (let i = 0; i < Math.abs(dy); i++) {
-        cy += Math.sign(dy);
-        for (let j = -pathRadius; j < pathRadius; j++) {
-          if (0 <= cx + j && cx + j < this.size) {
-            this.grid[cx + j][cy] = new Tile('F', true);
+      else {
+        for (let i = 0; i < Math.abs(dy); i++) {
+          cy += Math.sign(dy);
+          for (let j = -pathRadius; j < pathRadius; j++) {
+            if (0 <= cx + j && cx + j < this.size) {
+              this.grid[cx + j][cy] = new Tile(c.biome, true);
+            }
+          }
+        }
+        for (let i = 0; i < Math.abs(dx); i++) {
+          cx += Math.sign(dx);
+          for (let j = -pathRadius; j < pathRadius; j++) {
+            if (0 <= cy + j && cy + j < this.size) {
+              this.grid[cx][cy + j] = new Tile(nc.biome, true);
+            }
           }
         }
       }
+
     }
 
     // draw cities
@@ -82,7 +129,7 @@ export default class World {
       for (let i = Math.floor(city.x - city.rx/2.0); i < city.x + city.rx/2.0; i++) {
         for (let j = Math.floor(city.y - city.ry/2.0); j < city.y + city.ry/2.0; j++) {
           if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
-            this.grid[i][j] = new Tile('G', true);
+            this.grid[i][j] = new Tile(city.biome, true);
           }
         }
       }

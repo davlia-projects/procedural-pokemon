@@ -8,16 +8,17 @@ const TILEMAP = {
 
 const TERRAIN_TILEMAP = {
   '0': {x: 0, y: 0},
-  'G': {x: 0, y: 2 * 16}, // grass
-  'S': {x: 144, y: 48}, // snow
-  'W': {x: 432, y: 112}, // water
+  'grass': {x: 0, y: 2 * 16}, // grass
+  'snow': {x: 144, y: 48}, // snow
+  'water': {x: 432, y: 112}, // water
   'DR': {x: 64, y: 224}, // dirt rock
   'F': {x:0, y: 9 * 16}, // flower
   'B': {x:16, y: 128}, // bush
   'F2': {x:16, y: 192}, // more flowers
-  'D': {x: 721, y: 48}, // sand
+  'sand': {x: 721, y: 48}, // sand
   'SB': {x: 192, y: 112}, // snow bush
-  'WR': {x: 416, y: 128} // water rock
+  'WR': {x: 416, y: 128}, // water rock
+  'town': {x: 672, y: 48}
   // more to come...
 };
 
@@ -163,7 +164,7 @@ export default class RenderEngine {
     this.ctx.drawImage(
       spriteSheet.image,
       spritePos.x, spritePos.y,
-      tileWidth-1, tileHeight-1,
+      tileWidth, tileHeight,
       canvasPosx, canvasPosy,
       canvasTileWidth, canvasTileHeight
     );

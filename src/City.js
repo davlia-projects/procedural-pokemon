@@ -6,9 +6,11 @@
 // pokecenter - boolean
 
 export default class City {
-	constructor(pos, biome, rads, house_cnt, pokemart, pokecenter) {
-		this.position = pos;
-		this.radius = rad;
+	constructor(x, y, rx, ry, biome, house_cnt, pokemart, pokecenter) {
+		this.x = x;
+		this.y = y;
+		this.rx = rx;
+		this.ry = ry;
 		this.biome = biome;
 		this.house_count = house_cnt;
 		this.pokemart = pokemart;

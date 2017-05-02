@@ -54,7 +54,7 @@ export default class World {
     this.defineAreaBiomes();
     this.connectAreaCenters();
     this.defineAreaContent();
-    this.defineCities();
+    this.fillAreas();
 }
 
   defineNPAreas() {
@@ -82,7 +82,7 @@ export default class World {
       while (y + ry/2 > this.size - padding || y - ry/2 < padding) {
         y = Math.floor(util.random() * this.size);
       }
-      let area = new Area(x, y, rx, ry, undefined, 0, false, false);
+      let area = new Area(x, y, rx, ry, undefined, 10, true, true);
       this.areas.push(area);
     }
   }
@@ -159,7 +159,7 @@ export default class World {
     }
   }
 
-  defineCities() {
+  fillAreas() {
     this.areas.forEach(area => {
       area.init(this.grid);
     });

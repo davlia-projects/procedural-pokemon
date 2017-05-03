@@ -52,8 +52,9 @@ export default class World {
     this.defineNPAreas();
     this.defineAreaCenters();
     this.defineAreaBiomes();
-    this.connectAreaCenters();
     this.defineAreaContent();
+    this.connectAreaCenters();
+    this.fixDisconnectedComponents();
     this.fillAreas();
     this.defineNPContent();
     //this.defineCities();
@@ -104,6 +105,7 @@ export default class World {
       let a2 = this.findNearestArea(a1, a1.neighbors);
       a1.neighbors.push(a2);
       a2.neighbors.push(a1);
+      let a3 = this.findNearestArea(a1, a1.neighbors);
       let randomOrder = util.random();
       this.definePaths(a1, a2, randomOrder);
     }
@@ -117,74 +119,39 @@ export default class World {
     let a1y = a1.y;
     let a2x = a2.x;
     let a2y = a2.y;
-    if (randomOrder < 0.5) {
-      // east/west for a1, north/south for a2
-      let ewOutlet, nsOutlet;
-      if (Math.sign(dx) === -1) {
-        ewOutlet = {x: a1x - a1.rx, y: a1y};
+    // if (randomOrder < 1) {
+    for (let i = 0; i < Math.abs(dx); i++) {
+      a1x += Math.sign(dx);
+      if (a1x === a1.x + a1.rx || a1x === a1.x - a1.rx) {
+        a1.outlets.push({x: a1x, y: a1y});
       }
-      else {
-        ewOutlet = {x: a1x + a1.rx, y: a1y};
+      if ((Math.abs(dy) < Math.abs(a1.ry)) && (a1x === a2.x + a2.rx || a1x === a2.x - a2.rx)) {
+        a2.outlets.push({x: a1x, y: a1y});
       }
-      if (Math.sign(dy) === -1) {
-        nsOutlet = {x: a2x, y: a2y + a2.ry};
-      }
-      else {
-        nsOutlet = {x: a2x, y: a2y - a2.ry};
-      }
-      a1.outlets.push(ewOutlet);
-      a2.outlets.push(nsOutlet);
-      for (let i = 0; i < Math.abs(dx); i++) {
-        a1x += Math.sign(dx);
-        for (let j = -pathRadius; j < pathRadius; j++) {
-          if (0 <= a1y + j && a1y + j < this.size) {
-            this.grid[a1x][a1y + j] = new Tile(a1.biome, true);
-          }
-        }
-      }
-      for (let i = 0; i < Math.abs(dy); i++) {
-        a1y += Math.sign(dy);
-        for (let j = -pathRadius; j < pathRadius; j++) {
-          if (0 <= a1x + j && a1x + j < this.size) {
-            this.grid[a1x + j][a1y] = new Tile(a2.biome, true);
-          }
+      for (let j = -pathRadius; j < pathRadius; j++) {
+        if (0 <= a1y + j && a1y + j < this.size) {
+          this.grid[a1x][a1y + j] = new Tile(a1.biome, true);
         }
       }
     }
-    else {
-      let ewOutlet, nsOutlet;
-      // a1 has nsOutlet, a2 has ewOutlet
-      if (Math.sign(dx) === -1) {
-        ewOutlet = {x: a2x - a2.rx, y: a2y};
+    for (let i = 0; i < Math.abs(dy); i++) {
+      a1y += Math.sign(dy);
+      if (a1y === a1.y + a1.ry || a1y === a1.y - a1.ry) {
+        a2.outlets.push({x: a1x, y: a1y});
       }
-      else {
-        ewOutlet = {x: a2x + a2.rx, y: a2y};
+      if ((Math.abs(dx) < Math.abs(a1.rx)) && (a1y === a2.y + a2.ry || a1y === a2.y - a2.ry)) {
+        a1.outlets.push({x: a1x, y: a1y});
       }
-      if (Math.sign(dy) === -1) {
-        nsOutlet = {x: a1x, y: a1y + a1.ry};
-      }
-      else {
-        nsOutlet = {x: a1x, y: a1y - a1.ry};
-      }
-      a1.outlets.push(nsOutlet);
-      a2.outlets.push(ewOutlet);
-      for (let i = 0; i < Math.abs(dy); i++) {
-        a1y += Math.sign(dy);
-        for (let j = -pathRadius; j < pathRadius; j++) {
-          if (0 <= a1x + j && a1x + j < this.size) {
-            this.grid[a1x + j][a1y] = new Tile(a1.biome, true);
-          }
-        }
-      }
-      for (let i = 0; i < Math.abs(dx); i++) {
-        a1x += Math.sign(dx);
-        for (let j = -pathRadius; j < pathRadius; j++) {
-          if (0 <= a1y + j && a1y + j < this.size) {
-            this.grid[a1x][a1y + j] = new Tile(a2.biome, true);
-          }
+      for (let j = -pathRadius; j < pathRadius; j++) {
+        if (0 <= a1x + j && a1x + j < this.size) {
+          this.grid[a1x + j][a1y] = new Tile(a2.biome, true);
         }
       }
     }
+  }
+
+  fixDisconnectedComponents() {
+
   }
 
   defineAreaContent() {

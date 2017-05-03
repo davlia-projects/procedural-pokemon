@@ -324,7 +324,7 @@ export default class Area {
               }
             }
           }
-          spawnProb += Math.sqrt(neighbors) * 0.03;
+          spawnProb += Math.sqrt(neighbors) * 0.3;
 
           if (rand < spawnProb) {
             let doodad = util.choose(this.doodads);

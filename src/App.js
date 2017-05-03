@@ -110,6 +110,18 @@ export default class App {
 
   }
 
+  itsAlive() {
+      this.interval = setInterval(() => {
+        let rerender = this.world.morph();
+        if (rerender) {
+          this.re.render();
+          if (window.DEBUG_MODE === 1) {
+            this.re.debugRendered = false;
+          }
+        }
+      }, 20000);
+  }
+
 /**********************
   WebSocket Shenanigans
  **********************/
@@ -139,6 +151,7 @@ export default class App {
       case 'init':
         this.clientID = id;
         this.world.initWorld(data.init.world, id);
+        this.itsAlive();
         break;
       case 'add':
         this.world.addAgents(data.update.add);

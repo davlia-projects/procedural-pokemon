@@ -19,9 +19,12 @@ export default class Area {
     this.outlets = [];
     this.biome = this.getRandomBiome();
 
+		// lol
+		this.waitThatWasntThereBeforeWTF = 0.1;
 	}
 
 	init(grid) {
+		this.fill(grid);
 		this.resolveSprites(grid);
 		if (['grass', 'water', 'snow'].includes(this.biome)) {
 			this.genEntryRoads(grid);
@@ -44,6 +47,14 @@ export default class Area {
     // this.genPonds(grid); // TODO: improve algorithm
 	}
 
+	fill(grid) {
+		for (let i = this.x - this.rx; i <= this.x + this.rx; i++) {
+			for (let j = this.y - this.ry; j <= this.y + this.ry; j++) {
+				grid[i][j].spriteID = this.biome;
+			}
+		}
+	}
+
   getRandomBiome() {
     let rand = util.random();
     if (rand < 0.25) {
@@ -59,7 +70,7 @@ export default class Area {
       return 'snow';
     }
   }
-  
+
 	resolveSprites(grid) {
 		// default values
 		this.treeSprite = 'T0';

@@ -25,6 +25,8 @@ export default class Route {
         this.biome = biome; // TODO: mocked biome
         this.sx += (this.sx % 2 === 0) ? 0 : 2 - (this.sx % 2);
         this.sy += (this.sy % 3 === 0) ? 0 : 3 - (this.sy % 3);
+
+        this.waitThatWasntThereBeforeWTF = 0.1;
     }
 
     init(grid) {
@@ -227,7 +229,7 @@ export default class Route {
                     }
                 }
             }
-        }   
+        }
     }
 
 
@@ -301,12 +303,12 @@ export default class Route {
                               grid[i][j].pokemon = 's2';
                             } else if (rand < 0.1) {
                               grid[i][j].pokemon = 's3';
-                            }              
+                            }
                         }
                         else if (grid[i][j].biome === 'water') {
                             if (rand < 0.1) {
                               grid[i][j].pokemon = 'w1';
-                            }                            
+                            }
                         }
                         else {
                             if (rand < 0.01) {

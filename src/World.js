@@ -464,6 +464,35 @@ export default class World {
     return this.agents[this.me];
   }
 
+  morph() {
+    let needsRerender = false;
+    this.routes.forEach(route => {
+      let valid = true;
+      Object.keys(this.agents).forEach(agent => {
+        let a = this.agents[agent];
+        valid &= !util.inBound(route.x - route.rx, a.pos.x, route.x + route.rx);
+        valid &= !util.inBound(route.y - route.ry, a.pos.y, route.y + route.ry);
+      });
+      if (valid && util.random() < route.waitThatWasntThereBeforeWTF) {
+        route.init(this.grid);
+        needsRerender = true;
+      }
+    });
+    this.areas.forEach(area => {
+      let valid = true;
+      Object.keys(this.agents).forEach(agent => {
+        let a = this.agents[agent];
+        valid &= !util.inBound(area.x - area.rx, a.pos.x, area.x + area.rx);
+        valid &= !util.inBound(area.y - area.ry, a.pos.y, area.y + area.ry);
+      });
+      if (valid && util.random() < area.waitThatWasntThereBeforeWTF) {
+        area.init(this.grid);
+        needsRerender = true;
+      }
+    });
+    return needsRerender;
+  }
+
   serialize() {
     let agents = [];
     for (let p in this.agents) {

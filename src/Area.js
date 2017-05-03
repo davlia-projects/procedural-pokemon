@@ -97,7 +97,8 @@ export default class Area {
 	genEntryRoads(grid) {
 		this.outlets.forEach(outlet => {
       let { x, y } = outlet;
-			this.genRoadx(grid, this.x, this.y, x - this.x, 2, 2);
+			let sdx = Math.sign(x - this.x);
+			this.genRoadx(grid, this.x + 2 * sdx, this.y, x - this.x, 2, 2);
 			this.genRoady(grid, x, this.y, y - this.y, 2, 2);
 		});
 	}

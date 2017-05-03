@@ -98,8 +98,6 @@ export default class App {
     container.appendChild(this.canvas);
     document.body.appendChild(container);
     if (window.DEBUG_MODE === 1) {
-      // container = document.createElement('div');
-      // container.className = 'debug-canvas-container';
       container.appendChild(window.debugCanvas);
       document.body.appendChild(container);
     }
@@ -158,7 +156,7 @@ export default class App {
       case 'init':
         this.clientID = id;
         this.world.initWorld(data.init.world, id);
-        // this.itsAlive();
+        this.itsAlive();
         break;
       case 'add':
         this.world.addAgents(data.update.add);

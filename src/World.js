@@ -13,7 +13,7 @@ export default class World {
     if (0 <= x && x < this.size && 0 <= y && y < this.size) {
       return this.grid[x][y];
     } else {
-      return new Tile('0');
+      return null;
     }
   }
 
@@ -43,7 +43,7 @@ export default class World {
     util.seed(seed);
     this.size = size;
 
-    // creating grid
+    // creating grid[]
     this.grid = new Array(size);
     for (let i = 0; i < size; i++) {
       this.grid[i] = new Array(size);
@@ -54,7 +54,8 @@ export default class World {
     this.defineAreaBiomes();
     this.connectAreaCenters();
     this.defineAreaContent();
-    this.defineCities();
+    this.defineNPContent();
+    //this.defineCities();
 }
 
   defineNPAreas() {
@@ -193,6 +194,114 @@ export default class World {
     }
   }
 
+  defineNPContent() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        // check if this is NP tile
+        let npTile = this.grid[i][j];
+        if (npTile.spriteID === '0' && i + 1 < this.size && i - 1 >= 0) {
+          // check if this is a up, down, left, right
+          let uTile = this.grid[i][j-1];
+          if (uTile !== undefined && (uTile.spriteID === 'grass' || uTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 0, -1);
+            for (let k = 1; k < 5; k++) {
+              this.grid[i][j+k] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+          let dTile = this.grid[i][j+1];
+          if (dTile !== undefined && (dTile.spriteID === 'grass' || dTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 0, 1);
+            for (let k = 1; k < 5; k++) {
+              this.grid[i][j-k] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+          let lTile = this.grid[i-1][j];
+          if (lTile !== undefined && (lTile.spriteID === 'grass' || lTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, -1, 0);
+            for (let k = 1; k < 7; k++) {
+              this.grid[i+k][j] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+
+          let rTile = this.grid[i+1][j];
+          if (rTile !== undefined && (rTile.spriteID === 'grass' || rTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 1, 0);
+            for (let k = 1; k < 7; k++) {
+              this.grid[i-k][j] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+
+          // check for corners
+          let urTile = this.grid[i+1][j+1];
+          if (urTile !== undefined && (urTile.spriteID === 'grass' || urTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 2, -1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (i - k >= 0 && j - l >= 0 && this.grid[i-k][j-l].spriteID === '0') {
+                  this.grid[i-k][j-l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+
+          let ulTile = this.grid[i-1][j+1];
+          if (ulTile !== undefined && (ulTile.spriteID === 'grass' || ulTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 4, -1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (k === 0 && l === 0) {
+                  continue;
+                }
+                if (i + k < this.size && j - l >= 0 && this.grid[i+k][j-l].spriteID === '0') {
+                  this.grid[i+k][j-l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+
+          let brTile = this.grid[i+1][j-1];
+          if (brTile !== undefined && (brTile.spriteID === 'grass' || brTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 2, 1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (i - k >= 0 && j + l < this.size && this.grid[i-k][j+l].spriteID === '0') {
+                  this.grid[i-k][j+l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+
+          let blTile = this.grid[i-1][j-1];
+          if (blTile !== undefined && (blTile.spriteID === 'grass' || blTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 4, 1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (k === 0 && l === 0) {
+                  continue;
+                }
+                if (i + k < this.size && j + l < this.size && this.grid[i+k][j+l].spriteID === '0') {
+                  this.grid[i+k][j+l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  fillNPContent(tile, i, j) {
+
+  }
+
   defineCities() {
     this.areas.forEach(area => {
       area.init(this.grid);
@@ -225,13 +334,10 @@ export default class World {
     let a, min_dist, closest;
     for (let i = 0; i < this.areas.length; i++) {
       a = this.areas[i];
-      console.log(a);
       let dist = Math.sqrt(Math.pow((a.x - x), 2) + Math.pow((a.y - y), 2));
-      console.log(min_dist);
       if (dist < min_dist || min_dist === undefined) {
         min_dist = dist;
         closest = a;
-        console.log(closest);
       }
     }
     // calculate distance to closest area

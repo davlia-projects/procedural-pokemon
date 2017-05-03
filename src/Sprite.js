@@ -11,6 +11,7 @@ export const TERRAIN_TILEMAP = {
   'SB': {x: 192, y: 112}, // snow bush
   'WR': {x: 416, y: 128}, // water rock
   'PC': {x: 416, y: 384},
+  'mtn-d': {x: 432, y: 1328},
   // more to come...
 };
 

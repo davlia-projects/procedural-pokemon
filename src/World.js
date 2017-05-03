@@ -157,8 +157,8 @@ export default class World {
     // draw cities
     for (let c = 0; c < this.areas.length; c++) {
       let area = this.areas[c];
-      for (let i = Math.floor(area.x - area.sx/2.0); i < area.x + area.sx/2.0; i++) {
-        for (let j = Math.floor(area.y - area.sy/2.0); j < area.y + area.sy/2.0; j++) {
+      for (let i = Math.floor(area.x - area.rx); i < area.x + area.rx; i++) {
+        for (let j = Math.floor(area.y - area.ry); j < area.y + area.ry; j++) {
           if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
             this.grid[i][j] = new Tile(area.biome, true);
           }

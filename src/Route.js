@@ -25,6 +25,8 @@ export default class Route {
         this.biome = biome; // TODO: mocked biome
         this.sx += (this.sx % 2 === 0) ? 0 : 2 - (this.sx % 2);
         this.sy += (this.sy % 3 === 0) ? 0 : 3 - (this.sy % 3);
+
+        this.waitThatWasntThereBeforeWTF = 0.1;
     }
 
     init(grid) {

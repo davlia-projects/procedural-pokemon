@@ -16,7 +16,8 @@ export default class Area {
 		this.pokecenter = pokecenter;
 		this.structures = [];
 		this.neighbors = [];
-		// this.outlets = [{x: x + this.rx, y: y}, {x: x, y: y + this.ry}];
+    this.outlets = [];
+    this.biome = undefined;
 
     // TODO: change spriteIDs based on biome
     this.treeSprite = 'T0';
@@ -25,8 +26,7 @@ export default class Area {
     this.bpcSprite = 'BPC';
     this.pmSprite = 'PM';
     this.pondSprite = 'W0';
-    this.outlets = [];
-		this.biome = undefined;
+    this.doodads = ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'];
 	}
 
 	init(grid) {
@@ -37,11 +37,13 @@ export default class Area {
     this.repairRoads(grid);
     this.genTrees(grid);
     this.repairTrees(grid);
+    this.genDoodads(grid);
     // this.genPonds(grid); // TODO: improve algorithm
 	}
 
   genRoadx(grid, startx, starty, length, lw, rw) {
     util.iterate(startx, startx + length, i => {
+      console.log(i);
       for (let w = -lw; w <= rw; w++) {
         if (grid[i][starty + w].spriteID === this.biome) {
           grid[i][starty + w] = new Tile(this.roadSprite, true, 1, 1);
@@ -61,25 +63,11 @@ export default class Area {
   }
 
 	genEntryRoads(grid) {
-		// TODO: entrances are mocked
-		this.outlets.forEach(ep => {
-			let sx = Math.sign(ep.x - this.x);
-			util.iterate(this.x - sx * 2, ep.x, i => {
-				for (let w = -2; w <= 2; w++) {
-          if (grid[i][this.y + w].spriteID === this.biome) {
-            grid[i][this.y + w] = new Tile(this.roadSprite, true, 1, 1);
-          }
-				}
-			});
-			let sy = Math.sign(ep.x - this.x);
-			util.iterate(this.y - sy * 2, ep.y, i => {
-				for (let w = -2; w <= 2; w++) {
-          if (grid[this.x + w][i].spriteID === this.biome) {
-            grid[this.x + w][i] = new Tile(this.roadSprite, true, 1, 1);
-          }
-				}
-			});
-		})
+		this.outlets.forEach(outlet => {
+      let { x, y } = outlet;
+			this.genRoadx(grid, this.x, this.y, x - this.x, 2, 2);
+			this.genRoady(grid, x, this.y, y - this.y, 2, 2);
+		});
 	}
 
   valid(grid, px, py) {
@@ -114,11 +102,11 @@ export default class Area {
 
   connectRoads(grid, locx, locy, structure) {
     let nearest = this.findNearest(this.roadSprite, locx, locy + structure.sy, grid);
-    this.genRoady(grid, locx, locy, structure.sy + 1, 1, 1); // protrude down a bit
+    this.genRoady(grid, locx, locy, structure.sy + 2, 1, 1); // protrude down a bit
     locy += structure.sy;
-    this.genRoadx(grid, locx, locy, nearest.x - locx + 2 * Math.sign(nearest.x - locx), 1, 1);
+    this.genRoadx(grid, locx, locy, nearest.x - locx + 3 * Math.sign(nearest.x - locx), 1, 1);
     locx = nearest.x + 1;
-    this.genRoady(grid, locx, locy, nearest.y - locy, 1, 1);
+    this.genRoady(grid, locx, locy, nearest.y - locy + 2 * Math.sign(nearest.y - locy), 1, 1);
   }
 
 	genPokecenter(grid) {
@@ -224,25 +212,21 @@ export default class Area {
   }
 
   repairTrees(grid) {
+    let makeTree = (i, j, dx, dy) => {
+      let t = grid[i + dx][j + dy];
+      t.spriteID = this.treeSprite;
+      t.offset(dx, dy);
+      t.traversable = false;
+    }
     for (let i = this.x - this.rx; i <= this.x + this.rx; i++) {
       for (let j = this.y - this.ry; j <= this.y + this.ry; j++) {
         let tile = grid[i][j];
         if (tile.spriteID === this.treeSprite && tile.offx === 0 && tile.offy === 0) {
-          grid[i][j + 1].spriteID = this.treeSprite;
-          grid[i][j + 1].offset(0, 1);
-          grid[i][j + 1].traversable = false;
-          grid[i][j + 2].spriteID = this.treeSprite;
-          grid[i][j + 2].offset(0, 2);
-          grid[i][j + 2].traversable = false;
-          grid[i + 1][j].spriteID = this.treeSprite;
-          grid[i + 1][j].offset(1, 0);
-          grid[i + 1][j].traversable = false;
-          grid[i + 1][j + 1].spriteID = this.treeSprite;
-          grid[i + 1][j + 1].offset(1, 1);
-          grid[i + 1][j + 1].traversable = false;
-          grid[i + 1][j + 2].spriteID = this.treeSprite;
-          grid[i + 1][j + 2].offset(1, 2);
-          grid[i + 1][j + 2].traversable = false;
+          makeTree(i, j, 0, 1);
+          makeTree(i, j, 0, 2);
+          makeTree(i, j, 1, 0);
+          makeTree(i, j, 1, 1);
+          makeTree(i, j, 1, 2);
         }
       }
     }
@@ -318,6 +302,33 @@ export default class Area {
           } else if (grid[i - 1][j - 1].spriteID === this.biome && tile.offx === 1 && tile.offy === 1) {
             tile.offx = 1;
             tile.offy = -2;
+          }
+        }
+      }
+    }
+  }
+
+  genDoodads(grid) {
+    let r = 1;
+    for (let i = this.x - this.rx; i <= this.x + this.rx; i++) {
+      for (let j = this.y - this.ry; j <= this.y + this.ry; j++) {
+        let tile = grid[i][j];
+        if (tile.spriteID === this.biome) {
+          let rand = util.random();
+          let spawnProb = 0.01;
+          let neighbors = 0;
+          for (let x = i - r; x <= i + r; x++) {
+            for (let y = j - r; y <= j + r; y++) {
+              if (grid[x][y].spriteID[0] === 'D') {
+                neighbors++;
+              }
+            }
+          }
+          spawnProb += Math.sqrt(neighbors) * 0.03;
+
+          if (rand < spawnProb) {
+            let doodad = util.choose(this.doodads);
+            tile.spriteID = doodad;
           }
         }
       }

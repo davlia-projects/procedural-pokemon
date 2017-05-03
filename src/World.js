@@ -121,16 +121,16 @@ export default class World {
       // east/west for a1, north/south for a2
       let ewOutlet, nsOutlet;
       if (Math.sign(dx) === -1) {
-        ewOutlet = {x: a1x - a1.sx/2.0, y: a1y};
+        ewOutlet = {x: a1x - a1.rx, y: a1y};
       }
       else {
-        ewOutlet = {x: a1x + a1.sx/2.0, y: a1y};
+        ewOutlet = {x: a1x + a1.rx, y: a1y};
       }
       if (Math.sign(dy) === -1) {
-        nsOutlet = {x: a2x, y: a2y + a2.sy/2.0};
+        nsOutlet = {x: a2x, y: a2y + a2.ry};
       }
       else {
-        nsOutlet = {x: a2x, y: a2y - a2.sy/2.0};
+        nsOutlet = {x: a2x, y: a2y - a2.ry};
       }
       a1.outlets.push(ewOutlet);
       a2.outlets.push(nsOutlet);
@@ -155,16 +155,16 @@ export default class World {
       let ewOutlet, nsOutlet;
       // a1 has nsOutlet, a2 has ewOutlet
       if (Math.sign(dx) === -1) {
-        ewOutlet = {x: a2x - a2.rx/2.0, y: a2y};
+        ewOutlet = {x: a2x - a2.rx, y: a2y};
       }
       else {
-        ewOutlet = {x: a2x + a2.rx/2.0, y: a2y};
+        ewOutlet = {x: a2x + a2.rx, y: a2y};
       }
       if (Math.sign(dy) === -1) {
-        nsOutlet = {x: a1x, y: a1y + a1.ry/2.0};
+        nsOutlet = {x: a1x, y: a1y + a1.ry};
       }
       else {
-        nsOutlet = {x: a1x, y: a1y - a1.ry/2.0};
+        nsOutlet = {x: a1x, y: a1y - a1.ry};
       }
       a1.outlets.push(nsOutlet);
       a2.outlets.push(ewOutlet);
@@ -191,8 +191,8 @@ export default class World {
     // draw cities
     for (let c = 0; c < this.areas.length; c++) {
       let area = this.areas[c];
-      for (let i = Math.floor(area.x - area.sx/2.0); i < area.x + area.sx/2.0; i++) {
-        for (let j = Math.floor(area.y - area.sy/2.0); j < area.y + area.sy/2.0; j++) {
+      for (let i = Math.floor(area.x - area.rx); i < area.x + area.rx; i++) {
+        for (let j = Math.floor(area.y - area.ry); j < area.y + area.ry; j++) {
           if (0 <= i  && i < this.size && 0 <= j && j < this.size) {
             this.grid[i][j] = new Tile(area.biome, true);
           }

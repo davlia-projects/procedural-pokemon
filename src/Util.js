@@ -53,6 +53,10 @@ export default class Util {
     }
   }
 
+  choose(l) {
+    return l[Math.floor(this.random() * l.length)];
+  }
+
   /*
   Iterates integers starting from `start` and finishes at `end` inclusively
   and applies callback function `f`. The callback follows this signature:
@@ -66,7 +70,7 @@ export default class Util {
   iterate(start, end, f) {
     let d = end - start;
     let sd = Math.sign(d);
-    for (let i = 0; i <= Math.abs(d); i++) {
+    for (let i = 0; i < Math.abs(d); i++) {
       f(start + i * sd);
     }
   }

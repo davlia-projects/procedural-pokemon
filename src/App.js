@@ -21,6 +21,7 @@ export default class App {
       window.debugCanvas = document.createElement('canvas');
       window.debugCanvas.width = 256;
       window.debugCanvas.height = 256;
+      window.debugCanvas.style.visibility = 'hidden';
     }
   }
 

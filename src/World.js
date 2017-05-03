@@ -44,7 +44,7 @@ export default class World {
     this.defineNPContent();
     this.fillAreas();
     this.fillRoutes();
-    //this.defineCities();
+    this.repairWorld();
 }
 
   defineNPAreas() {
@@ -437,6 +437,54 @@ export default class World {
       return true;
     }
     return false;
+  }
+
+  repairWorld() {
+    let { grid } = this;
+    for (let i = 1; i < this.size - 1; i++) {
+      for (let j = 1; j < this.size - 1; j++) {
+        let tile = grid[i][j];
+        let ntile = grid[i][j - 1];
+        let stile = grid[i][j + 1];
+        let wtile = grid[i - 1][j];
+        let etile = grid[i + 1][j];
+        if (tile.spriteID === 'sand') {
+          if (etile.spriteID === 'water' || etile.spriteID === 'R1') {
+            tile.spriteID = 'R1';
+          } else if (wtile.spriteID === 'water' || wtile.spriteID === 'R1') {
+            tile.spriteID = 'R1';
+          }
+          if (stile.spriteID === 'water' || stile.spriteID === 'R1') {
+            tile.spriteID = 'R1';
+          } else if (ntile.spriteID === 'water' || ntile.spriteID === 'R1') {
+            tile.spriteID = 'R1';
+          }
+        }
+
+        if (tile.spriteID === 'R1') {
+          tile.offset(1, 1);
+          if (grid[i + 1][j].spriteID === 'water') {
+            tile.offx += 1;
+          } else if (grid[i - 1][j].spriteID === 'water') {
+            tile.offx -= 1;
+          }
+          if (grid[i][j - 1].spriteID === 'water') {
+            tile.offy -= 1;
+          } else if (grid[i][j + 1].spriteID === 'water') {
+            tile.offy += 1;
+          }
+          if (grid[i + 1][j + 1].spriteID === 'water' && tile.offx === 1 && tile.offy === 1) {
+            tile.offset(2, -1);
+          } else if (grid[i + 1][j - 1].spriteID === 'water' && tile.offx === 1 && tile.offy === 1) {
+            tile.offset(2, -2);
+          } else if (grid[i - 1][j + 1].spriteID === 'water' && tile.offx === 1 && tile.offy === 1) {
+            tile.offset(1, -1);
+          } else if (grid[i - 1][j - 1].spriteID === 'water' && tile.offx === 1 && tile.offy === 1) {
+            tile.offset(1, -2);
+          }
+        }
+      }
+    }
   }
 
   // TODO: should we differentiate between agent types? :thinking:

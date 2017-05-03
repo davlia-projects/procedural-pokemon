@@ -59,7 +59,7 @@ export default class Area {
       return 'snow';
     }
   }
-  
+
 	resolveSprites(grid) {
 		// default values
 		this.treeSprite = 'T0';
@@ -353,7 +353,7 @@ export default class Area {
       for (let j = this.y - this.ry; j <= this.y + this.ry; j++) {
         let tile = grid[i][j];
         if (tile.spriteID === this.roadSprite) {
-          tile.offx = tile.offy = 1;
+          tile.offset(1, 1);
           if (grid[i + 1][j].spriteID !== this.roadSprite) {
             tile.offx += 1;
           } else if (grid[i - 1][j].spriteID !== this.roadSprite) {
@@ -365,17 +365,13 @@ export default class Area {
             tile.offy += 1;
           }
           if (grid[i + 1][j + 1].spriteID === this.biome && tile.offx === 1 && tile.offy === 1) {
-            tile.offx = 2;
-            tile.offy = -1;
+						tile.offset(2, -1);
           } else if (grid[i + 1][j - 1].spriteID === this.biome && tile.offx === 1 && tile.offy === 1) {
-            tile.offx = 2;
-            tile.offy = -2;
+						tile.offset(2, -2);
           } else if (grid[i - 1][j + 1].spriteID === this.biome && tile.offx === 1 && tile.offy === 1) {
-            tile.offx = 1;
-            tile.offy = -1;
+						tile.offset(1, -1);
           } else if (grid[i - 1][j - 1].spriteID === this.biome && tile.offx === 1 && tile.offy === 1) {
-            tile.offx = 1;
-            tile.offy = -2;
+						tile.offset(1, -2);
           }
         }
       }
@@ -391,8 +387,12 @@ export default class Area {
           let rand = util.random();
           let spawnProb = 0.01;
           let neighbors = 0;
+					let valid = true;
           for (let x = i - r; x <= i + r; x++) {
             for (let y = j - r; y <= j + r; y++) {
+							if (grid[x][y].spriteID === this.roadSprite) {
+								valid = false;
+							}
               if (grid[x][y].spriteID[0] === 'D') {
                 neighbors++;
               }
@@ -400,7 +400,7 @@ export default class Area {
           }
           spawnProb += Math.sqrt(neighbors) * 0.15;
 
-          if (rand < spawnProb) {
+          if (valid && rand < spawnProb) {
             let doodad = util.choose(this.doodads);
             tile.spriteID = doodad;
           }

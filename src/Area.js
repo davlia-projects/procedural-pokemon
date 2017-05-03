@@ -17,13 +17,14 @@ export default class Area {
 		this.structures = [];
 		this.neighbors = {north: false, south: false, east: false, west: false};
     this.outlets = [];
-    this.biome = this.getRandomBiome();
 
 		// lol
 		this.waitThatWasntThereBeforeWTF = 0.1;
+		this.biome = this.getRandomBiome();
 	}
 
 	init(grid) {
+		this.biome = this.getRandomBiome();
 		this.fill(grid);
 		this.resolveSprites(grid);
 		if (['grass', 'water', 'snow'].includes(this.biome)) {
@@ -51,6 +52,8 @@ export default class Area {
 		for (let i = this.x - this.rx; i <= this.x + this.rx; i++) {
 			for (let j = this.y - this.ry; j <= this.y + this.ry; j++) {
 				grid[i][j].spriteID = this.biome;
+				grid[i][j].offset(0,0);
+				grid[i][j].traversable = true;
 			}
 		}
 	}

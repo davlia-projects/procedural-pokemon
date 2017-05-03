@@ -23,6 +23,8 @@ export default class Route {
             this.ry = Math.floor(this.sy / 2);
         }
         this.biome = biome; // TODO: mocked biome
+        this.sx += 2 - (this.sx % 2);
+        this.sy += 3 - (this.sy % 3);
     }
 
     init(grid) {

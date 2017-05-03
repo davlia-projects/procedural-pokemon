@@ -12,6 +12,7 @@ export default class App {
     this.canvas = document.createElement('canvas'); // Aspect ratio of 3:2
     this.canvas.width = 240 * RESOLUTION_SCALE;
     this.canvas.height = 160 * RESOLUTION_SCALE;
+    this.canvas.className = 'viewport'
     this.terrainSpriteSrc = `${ASSETS}/biomes.png`;
     this.pokemonSpriteSrc = `${ASSETS}/pokemon.png`;
     this.playerSpriteSrc = `${ASSETS}/player.png`;
@@ -21,6 +22,7 @@ export default class App {
       window.debugCanvas = document.createElement('canvas');
       window.debugCanvas.width = 256;
       window.debugCanvas.height = 256;
+      window.debugCanvas.className = 'debug-canvas'
     }
   }
 
@@ -92,9 +94,15 @@ export default class App {
   }
 
   onLoad() {
-    document.body.appendChild(this.canvas);
+    let container = document.createElement('div');
+    container.className = 'viewport-container';
+    container.appendChild(this.canvas);
+    document.body.appendChild(container);
     if (window.DEBUG_MODE === 1) {
-      document.body.appendChild(window.debugCanvas);
+      // container = document.createElement('div');
+      // container.className = 'debug-canvas-container';
+      container.appendChild(window.debugCanvas);
+      document.body.appendChild(container);
     }
     // TODO: turn into Promise.All instead of callback chain
     this.terrainSprite = new Sprite(this.terrainSpriteSrc, 16, 16, () => {
@@ -151,7 +159,7 @@ export default class App {
       case 'init':
         this.clientID = id;
         this.world.initWorld(data.init.world, id);
-        this.itsAlive();
+        // this.itsAlive();
         break;
       case 'add':
         this.world.addAgents(data.update.add);

@@ -65,6 +65,8 @@ export default class World {
     while (y + sy/2 > this.size - padding || y - sy/2 < padding) {
       sy = Math.floor(util.random() * this.size);
     }
+    sx += (sx % 2 === 0) ? 0 : 2 - (sx % 2);
+    sy += (sy % 3 === 0) ? 0 : 3 - (sy % 3);
     let area = new Area(x, y, sx, sy, 3, true, true);
     this.areas.push(area);
     return area;

@@ -25,8 +25,7 @@ export default class Area {
     this.bpcSprite = 'BPC';
     this.pmSprite = 'PM';
     this.pondSprite = 'W0';
-		this.nsOutlet = undefined;
-		this.ewOutlet = undefined;
+    this.outlets = [];
 		this.biome = undefined;
 	}
 

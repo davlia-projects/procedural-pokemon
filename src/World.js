@@ -119,18 +119,21 @@ export default class World {
     let a2y = a2.y;
     if (randomOrder < 0.5) {
       // east/west for a1, north/south for a2
+      let ewOutlet, nsOutlet;
       if (Math.sign(dx) === -1) {
-        a1.ewOutlet = {x: a1x - a1.rx/2.0, y: a1y};
+        ewOutlet = {x: a1x - a1.rx/2.0, y: a1y};
       }
       else {
-        a1.ewOutlet = {x: a1x + a1.rx/2.0, y: a1y};
+        ewOutlet = {x: a1x + a1.rx/2.0, y: a1y};
       }
       if (Math.sign(dy) === -1) {
-        a2.nsOutlet = {x: a2x, y: a2y + a2.ry/2.0};
+        nsOutlet = {x: a2x, y: a2y + a2.ry/2.0};
       }
       else {
-        a2.nsOutlet = {x: a2x, y: a2y - a2.ry/2.0};
+        nsOutlet = {x: a2x, y: a2y - a2.ry/2.0};
       }
+      a1.outlets.push(ewOutlet);
+      a2.outlets.push(nsOutlet);
       for (let i = 0; i < Math.abs(dx); i++) {
         a1x += Math.sign(dx);
         for (let j = -pathRadius; j < pathRadius; j++) {
@@ -149,19 +152,22 @@ export default class World {
       }
     }
     else {
+      let ewOutlet, nsOutlet;
       // a1 has nsOutlet, a2 has ewOutlet
       if (Math.sign(dx) === -1) {
-        a2.ewOutlet = {x: a2x - a2.rx/2.0, y: a2y};
+        ewOutlet = {x: a2x - a2.rx/2.0, y: a2y};
       }
       else {
-        a2.ewOutlet = {x: a2x + a2.rx/2.0, y: a2y};
+        ewOutlet = {x: a2x + a2.rx/2.0, y: a2y};
       }
       if (Math.sign(dy) === -1) {
-        a1.nsOutlet = {x: a1x, y: a1y + a1.ry/2.0};
+        nsOutlet = {x: a1x, y: a1y + a1.ry/2.0};
       }
       else {
-        a1.nsOutlet = {x: a1x, y: a1y - a1.ry/2.0};
+        nsOutlet = {x: a1x, y: a1y - a1.ry/2.0};
       }
+      a1.outlets.push(nsOutlet);
+      a2.outlets.push(ewOutlet);
       for (let i = 0; i < Math.abs(dy); i++) {
         a1y += Math.sign(dy);
         for (let j = -pathRadius; j < pathRadius; j++) {

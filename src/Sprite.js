@@ -23,6 +23,8 @@ export const TERRAIN_TILEMAP = {
   'H7': {x: 512, y: 544},
   'R0': {x: 368, y: 32},
   'R01': {x: 384, y: 0},
+  'T0': {x: 16, y: 144},
+  'W0': {x: 464, y: 32},
   // more to come...
 };
 

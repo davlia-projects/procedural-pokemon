@@ -6,4 +6,9 @@ export default class Tile {
     this.offx = offx || 0;
     this.offy = offy || 0;
   }
+
+  offset(x, y) {
+    this.offx = x;
+    this.offy = y;
+  }
 }

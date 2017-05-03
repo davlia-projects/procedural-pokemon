@@ -16,7 +16,7 @@ export default class Area {
 		this.pokecenter = pokecenter;
 		this.structures = [];
 		this.neighbors = [];
-		this.entryPoints = [{x: x + this.rx, y: y}, {x: x, y: y + this.ry}];
+		// this.outlets = [{x: x + this.rx, y: y}, {x: x, y: y + this.ry}];
 
     // TODO: change spriteIDs based on biome
     this.treeSprite = 'T0';
@@ -62,7 +62,7 @@ export default class Area {
 
 	genEntryRoads(grid) {
 		// TODO: entrances are mocked
-		this.entryPoints.forEach(ep => {
+		this.outlets.forEach(ep => {
 			let sx = Math.sign(ep.x - this.x);
 			util.iterate(this.x - sx * 2, ep.x, i => {
 				for (let w = -2; w <= 2; w++) {

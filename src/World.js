@@ -121,16 +121,16 @@ export default class World {
       // east/west for a1, north/south for a2
       let ewOutlet, nsOutlet;
       if (Math.sign(dx) === -1) {
-        ewOutlet = {x: a1x - a1.rx/2.0, y: a1y};
+        ewOutlet = {x: a1x - a1.sx/2.0, y: a1y};
       }
       else {
-        ewOutlet = {x: a1x + a1.rx/2.0, y: a1y};
+        ewOutlet = {x: a1x + a1.sx/2.0, y: a1y};
       }
       if (Math.sign(dy) === -1) {
-        nsOutlet = {x: a2x, y: a2y + a2.ry/2.0};
+        nsOutlet = {x: a2x, y: a2y + a2.sy/2.0};
       }
       else {
-        nsOutlet = {x: a2x, y: a2y - a2.ry/2.0};
+        nsOutlet = {x: a2x, y: a2y - a2.sy/2.0};
       }
       a1.outlets.push(ewOutlet);
       a2.outlets.push(nsOutlet);

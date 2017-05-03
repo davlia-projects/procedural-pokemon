@@ -41,7 +41,7 @@ export default class World {
     this.defineAreaContent();
     // this.connectAreaCenters();
     // this.fixDisconnectedComponents();
-    // this.fillAreas();
+    this.fillAreas();
     this.defineNPContent();
     //this.defineCities();
 }
@@ -71,35 +71,78 @@ export default class World {
 
   defineAreas() {
     // init area
-    let numAreas = this.size / 64;
+    let numAreas = 7;
+    let areaCnt = 1;
+    let stack = [];
     let area = this.generateArea(256, 256);
-    // generate random number from 1-3
-    // let num = Math.floor(util.random() * 3);
-    let num = 0;
-    if (num === 0) {
-      // one path
-      let len = Math.floor(util.random() * 64 + Math.max(area.sx, area.sy));
-      // let dir = Math.floor(util.random() * 4);
-      let dir = 0;
-      switch(dir) {
-        case 0: 
-          // draw north
-          let {x, y} = area;
-          let newX = x;
-          let newY = y - len;
-          let newArea = this.generateArea(newX, newY);
-          let route = new Route(area, newArea);
-          this.drawRoute(route, 'y');
-
+    let route;
+    let prev = undefined;
+    stack.push(area);
+    while (stack.length !== 0) {
+      area = stack.shift();
+      let num = util.random();
+      console.log(num);
+      // let num = 0;
+      if (num < 0.5) {
+        // one path
+        let len = Math.floor(util.random() * 100 + Math.max(area.sx, area.sy));
+        let dir = Math.floor(util.random() * 4);
+        while (area.prev === dir) {
+          dir = Math.floor(util.random() * 4);
+        }
+        switch(dir) {
+          case 0:
+            route = this.generateRoute(area, len, 'north');
+            route.a2.prev = 0;
+            break;
+          case 1:
+            route = this.generateRoute(area, len, 'south');
+            route.a2.prev = 1;
+            break;
+          case 2:
+            route = this.generateRoute(area, len, 'east');
+            route.a2.prev = 2;
+            break;
+          case 3:
+            route = this.generateRoute(area, len, 'west');
+            route.a2.prev = 3;
+            break;
+        }
+        areaCnt += 1;
+        if (areaCnt < numAreas) {
+          stack.push(route.a2);
+        }
+        else {
           break;
+        }
       }
-      // draw path from a1 
-    }
-    else if (num === 1) {
-
-    }
-    else {
-
+      else {
+        // two paths
+        // one path
+        let route1, route2;
+        let len = Math.floor(util.random() * 64 + Math.max(area.sx, area.sy));
+        let dir = Math.floor(util.random() * 2);
+        if (area.prev === 2 || area.prev === 3) {
+          route1 = this.generateRoute(area, len, 'north');
+          route2 = this.generateRoute(area, len, 'south');
+          route1.a2.prev = 0;
+          route2.a2.prev = 1;
+        }
+        else {
+          route1 = this.generateRoute(area, len, 'east');
+          route2 = this.generateRoute(area, len, 'west');
+          route1.a2.prev = 2;
+          route2.a2.prev = 3;
+        }
+        areaCnt += 2;
+        if (areaCnt < numAreas) {
+          stack.push(route1.a2);
+          stack.push(route2.a2);
+        }
+        else {
+          break;
+        }
+      }
     }
   }
 
@@ -111,8 +154,69 @@ export default class World {
     }
   }
 
+  generateRoute(area, len, dir) {
+    let {x, y} = area;
+    let newX, newY, newArea, route;
+    switch(dir) {
+      case 'north':
+        while (area.y - len < 0) {
+          console.log("in north while");
+          len = Math.floor(util.random() * len);
+        }
+        newX = x;
+        newY = y - len;
+        area.outlets.push({x: x, y: y - area.sy});
+        newArea = this.generateArea(newX, newY);
+        newArea.outlets.push({x: newX, y: newY + newArea.sy});
+        route = new Route(area, newArea);
+        this.drawRoute(route, 'y');
+        break;
+      case 'south':
+        while (area.y + len > this.size) {
+          console.log("in south while");
+          len = Math.floor(util.random() * len);
+        }
+        newX = x;
+        newY = y + len;
+        area.outlets.push({x: x, y: y + area.sy});
+        newArea = this.generateArea(newX, newY);
+        newArea.outlets.push({x: newX, y: newY - newArea.sy});
+        route = new Route(area, newArea);
+        this.drawRoute(route, 'y');
+        break;
+      case 'east':
+        while (area.x + len > this.size) {
+          console.log("in east while");
+          len = Math.floor(util.random() * len);
+        }
+        newX = x + len;
+        newY = y;
+        area.outlets.push({x: x + area.sx, y: y});
+        newArea = this.generateArea(newX, newY);
+        newArea.outlets.push({x: newX - area.sx, y: newY});
+        route = new Route(area, newArea);
+        this.drawRoute(route, 'x');
+        break;
+      case 'west':
+        while (area.y - len < 0) {
+          console.log("in west while");
+          len = Math.floor(util.random() * len);
+        }
+        newX = x - len;
+        newY = y;
+        area.outlets.push({x: x - area.sx, y: y});
+        newArea = this.generateArea(newX, newY);
+        newArea.outlets.push({x: newX + area.sx, y: newY});
+        route = new Route(area, newArea);
+        this.drawRoute(route, 'x');
+        break;
+    }
+    return route;
+  }
+
   // connect a1 to a2
   drawRoute(route, dir) {
+    console.log("drawing");
     let {a1, a2} = route;
     let pathRadius = 8;
     let del;
@@ -120,6 +224,14 @@ export default class World {
     let a1y = a1.y;
     if (dir === 'x') {
       del = a2.x - a1.x;
+      for (let i = 0; i < Math.abs(del); i++) {
+        a1x += Math.sign(del);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= a1y + j && a1y + j < this.size) {
+            this.grid[a1x][a1y + j] = new Tile(a1.biome, true);
+          }
+        }
+      }
     }
     else {
       del = a2.y - a1.y;
@@ -127,13 +239,11 @@ export default class World {
         a1y += Math.sign(del);
         for (let j = -pathRadius; j < pathRadius; j++) {
           if (0 <= a1x + j && a1x + j < this.size) {
-            console.log(a1.biome);
             this.grid[a1x + j][a1y] = new Tile(a1.biome, true);
           }
         }
       }
     }
-
   }
 
   connectAreaCenters() {

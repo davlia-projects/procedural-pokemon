@@ -82,7 +82,7 @@ export default class World {
       // let dir = Math.floor(util.random() * 4);
       let dir = 0;
       switch(dir) {
-        case 0: 
+        case 0:
           // draw north
           let {x, y} = area;
           let newX = x;
@@ -93,7 +93,7 @@ export default class World {
 
           break;
       }
-      // draw path from a1 
+      // draw path from a1
     }
     else if (num === 1) {
 
@@ -127,7 +127,6 @@ export default class World {
         a1y += Math.sign(del);
         for (let j = -pathRadius; j < pathRadius; j++) {
           if (0 <= a1x + j && a1x + j < this.size) {
-            console.log(a1.biome);
             this.grid[a1x + j][a1y] = new Tile(a1.biome, true);
           }
         }

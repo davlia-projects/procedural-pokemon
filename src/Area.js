@@ -59,7 +59,6 @@ export default class Area {
 
   genRoadx(grid, startx, starty, length, lw, rw) {
     util.iterate(startx, startx + length, i => {
-      console.log(i);
       for (let w = -lw; w <= rw; w++) {
         if (grid[i][starty + w].spriteID === this.biome) {
           grid[i][starty + w] = new Tile(this.roadSprite, true, 1, 1);

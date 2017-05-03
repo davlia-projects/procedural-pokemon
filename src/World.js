@@ -85,7 +85,7 @@ export default class World {
       // let num = 0;
       if (num < 0.5) {
         // one path
-        let len = Math.floor(util.random() * 128 + 64);
+        let len = Math.floor(util.random() * 64 + 32);
         let dir = Math.floor(util.random() * 4);
         while (area.prev === dir) {
           dir = Math.floor(util.random() * 4);
@@ -121,7 +121,7 @@ export default class World {
         // two paths
         // one path
         let route1, route2;
-        let len = Math.floor(util.random() * 64 + 64);
+        let len = Math.floor(util.random() * 64 + 32);
         if (area.prev === 2 || area.prev === 3) {
           route1 = this.generateRoute(area, len, 'north');
           route2 = this.generateRoute(area, len, 'south');
@@ -134,6 +134,7 @@ export default class World {
           route1.a2.prev = 2;
           route2.a2.prev = 3;
         }
+        this.routes.push(route1, route2);
         areaCnt += 2;
         if (areaCnt < numAreas) {
           stack.push(route1.a2);
@@ -158,8 +159,8 @@ export default class World {
         newY = y - len;
         area.outlets.push({x: x, y: y - area.sy});
         newArea = this.generateArea(newX, newY);
-        newArea.outlets.push({x: newX, y: newY + newArea.sy});
-        route = new Route(area, newArea);
+        newArea.outlets.push({x: newX, y: newY + newArea.ry});
+        route = new Route(area, newArea, newArea.biome, 'v');
         this.drawRoute(route, 'y');
         break;
       case 'south':
@@ -170,8 +171,8 @@ export default class World {
         newY = y + len;
         area.outlets.push({x: x, y: y + area.sy});
         newArea = this.generateArea(newX, newY);
-        newArea.outlets.push({x: newX, y: newY - newArea.sy});
-        route = new Route(area, newArea);
+        newArea.outlets.push({x: newX, y: newY - newArea.ry});
+        route = new Route(area, newArea, newArea.biome, 'v');
         this.drawRoute(route, 'y');
         break;
       case 'east':
@@ -180,10 +181,10 @@ export default class World {
         }
         newX = x + len;
         newY = y;
-        area.outlets.push({x: x + area.sx, y: y});
+        area.outlets.push({x: x + area.rx, y: y});
         newArea = this.generateArea(newX, newY);
-        newArea.outlets.push({x: newX - area.sx, y: newY});
-        route = new Route(area, newArea);
+        newArea.outlets.push({x: newX - newArea.rx, y: newY});
+        route = new Route(area, newArea, newArea.biome, 'h');
         this.drawRoute(route, 'x');
         break;
       case 'west':
@@ -192,10 +193,10 @@ export default class World {
         }
         newX = x - len;
         newY = y;
-        area.outlets.push({x: x - area.sx, y: y});
+        area.outlets.push({x: x - area.rx, y: y});
         newArea = this.generateArea(newX, newY);
-        newArea.outlets.push({x: newX + area.sx, y: newY});
-        route = new Route(area, newArea);
+        newArea.outlets.push({x: newX + newArea.rx, y: newY});
+        route = new Route(area, newArea, newArea.biome, 'h');
         this.drawRoute(route, 'x');
         break;
     }

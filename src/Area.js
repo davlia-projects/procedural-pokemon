@@ -19,24 +19,27 @@ export default class Area {
     this.outlets = [];
     this.biome = this.getRandomBiome();
 
-    // TODO: change spriteIDs based on biome
-    this.treeSprite = 'T0';
-    this.roadSprite = 'R0';
-    this.pcSprite = 'PC';
-    this.bpcSprite = 'BPC';
-    this.pmSprite = 'PM';
-    this.pondSprite = 'W0';
-    this.doodads = ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'];
 	}
 
 	init(grid) {
-    this.genEntryRoads(grid);
+		this.resolveSprites(grid);
+		if (['grass', 'water', 'snow'].includes(this.biome)) {
+			this.genEntryRoads(grid);
+		}
 		this.genPokecenter(grid);
 		this.genPokemart(grid);
 		this.genHouses(grid);
-    this.repairRoads(grid);
-    this.genTrees(grid);
-    this.repairTrees(grid);
+		if (['grass', 'water', 'snow'].includes(this.biome)) {
+			this.repairRoads(grid);
+		}
+		if (['grass', 'snow'].includes(this.biome)) {
+			this.genTrees(grid);
+			this.repairTrees(grid);
+		}
+		if (this.biome === 'sand') {
+			this.genCacti(grid);
+			this.repairTrees(grid);
+		}
     this.genDoodads(grid);
     // this.genPonds(grid); // TODO: improve algorithm
 	}
@@ -56,6 +59,37 @@ export default class Area {
       return 'snow';
     }
   }
+  
+	resolveSprites(grid) {
+		// default values
+		this.treeSprite = 'T0';
+		this.roadSprite = 'R0';
+		this.pcSprite = 'PC';
+		this.bpcSprite = 'BPC';
+		this.pmSprite = 'PM';
+		this.pondSprite = 'W0';
+		this.doodads = ['D0', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7'];
+
+		switch (this.biome) {
+			case 'water':
+				this.treeSprite = 'T1';
+				this.roadSprite = 'R1';
+				this.doodads = ['DW0', 'DW1', 'DW2', 'DW3']
+				break;
+			case 'snow':
+				this.treeSprite = 'T2';
+				this.roadSprite = 'R2';
+				this.pcSprite = 'PC1';
+				this.bpcSprite = 'BPC1';
+				this.pmSprite = 'PM1';
+				this.doodads = ['DS0', 'DS1', 'DS2', 'DS3'];
+				break;
+			case 'sand':
+				this.treeSprite = 'T3';
+				// this.roadSprite = 'sand';
+				this.doodads = ['DD0', 'DD1'];
+		}
+	}
 
   genRoadx(grid, startx, starty, length, lw, rw) {
     util.iterate(startx, startx + length, i => {
@@ -80,7 +114,8 @@ export default class Area {
 	genEntryRoads(grid) {
 		this.outlets.forEach(outlet => {
       let { x, y } = outlet;
-			this.genRoadx(grid, this.x, this.y, x - this.x, 2, 2);
+			let sdx = Math.sign(x - this.x);
+			this.genRoadx(grid, this.x + 2 * sdx, this.y, x - this.x, 2, 2);
 			this.genRoady(grid, x, this.y, y - this.y, 2, 2);
 		});
 	}
@@ -116,6 +151,9 @@ export default class Area {
   }
 
   connectRoads(grid, locx, locy, structure) {
+		if (!['grass', 'water', 'snow'].includes(this.biome)) {
+			return;
+		}
     let nearest = this.findNearest(this.roadSprite, locx, locy + structure.sy, grid);
     this.genRoady(grid, locx, locy, structure.sy + 2, 1, 1); // protrude down a bit
     locy += structure.sy;
@@ -225,6 +263,27 @@ export default class Area {
       }
     }
   }
+
+	genCacti(grid) {
+		let r = 5;
+    for (let i = this.x - this.rx; i <= this.x + this.rx; i++) {
+      for (let j = this.y - this.ry; j <= this.y + this.ry; j++) {
+				let prob = 0.05;
+        let valid = true;
+        for (let x = i - r; x <= i + r; x++) {
+          for (let y = j - r; y <= j + r; y++) {
+            if (['0', 'H0', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', this.pcSprite, this.bpcSprite, this.pmSprite].includes(grid[x][y].spriteID)) {
+              valid = false;
+            }
+          }
+        }
+        if (valid && i % 2 === 0 && j % 3 === 0 && util.random() < prob) {
+          grid[i][j].spriteID = this.treeSprite;
+          grid[i][j].traversable = false;
+        }
+      }
+    }
+	}
 
   repairTrees(grid) {
     let makeTree = (i, j, dx, dy) => {
@@ -339,7 +398,7 @@ export default class Area {
               }
             }
           }
-          spawnProb += Math.sqrt(neighbors) * 0.3;
+          spawnProb += Math.sqrt(neighbors) * 0.15;
 
           if (rand < spawnProb) {
             let doodad = util.choose(this.doodads);

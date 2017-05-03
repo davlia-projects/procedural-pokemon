@@ -28,7 +28,6 @@ export default class Route {
     }
 
     init(grid) {
-        console.log(this);
         this.resolveSprites();
         if (this.orientation === 'v') {
             this.genObstacles(grid);
@@ -227,7 +226,7 @@ export default class Route {
                     }
                 }
             }
-        }   
+        }
     }
 
 
@@ -301,12 +300,12 @@ export default class Route {
                               grid[i][j].pokemon = 's2';
                             } else if (rand < 0.1) {
                               grid[i][j].pokemon = 's3';
-                            }              
+                            }
                         }
                         else if (grid[i][j].biome === 'water') {
                             if (rand < 0.1) {
                               grid[i][j].pokemon = 'w1';
-                            }                            
+                            }
                         }
                         else {
                             if (rand < 0.01) {

@@ -16,8 +16,8 @@ export default class Route {
 			this.sy = Math.abs(a1.y - a2.y) - (a1.ry + a2.ry);
 		} else {
 			this.dir = 1;
-			this.sx = Math.abs(a1.x - a2.x) - (a1.rx + a2.rx);
-			this.sy = 16;
+			this.sy = Math.abs(a1.x - a2.x) - (a1.rx + a2.rx);
+			this.sx = 16;
 		}
 		this.rx = Math.floor(this.sx / 2);
 		this.ry = Math.floor(this.sy / 2);

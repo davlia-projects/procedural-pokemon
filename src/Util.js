@@ -7,7 +7,7 @@ export default class Util {
   }
 
   seed(seed) {
-    this.randSeed = seed;
+    this.randSeed = seed + 7;
     this.rng = new Math.seedrandom(this.randSeed);
   }
 

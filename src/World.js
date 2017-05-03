@@ -8,6 +8,7 @@ export default class World {
   constructor() {
     this.agents = {};
     this.areas = [];
+    this.routes = [];
   }
 
   getTile(x, y) {
@@ -41,6 +42,7 @@ export default class World {
     this.defineAreaContent();
     this.defineNPContent();
     this.fillAreas();
+    this.fillRoutes();
     //this.defineCities();
 }
 
@@ -69,7 +71,7 @@ export default class World {
 
   defineAreas() {
     // init area
-    let numAreas = 7;
+    let numAreas = 6;
     let areaCnt = 1;
     let stack = [];
     let area = this.generateArea(256, 256);
@@ -83,7 +85,7 @@ export default class World {
       // let num = 0;
       if (num < 0.5) {
         // one path
-        let len = Math.floor(util.random() * 100 + Math.max(area.sx, area.sy));
+        let len = Math.floor(util.random() * 128 + 64);
         let dir = Math.floor(util.random() * 4);
         while (area.prev === dir) {
           dir = Math.floor(util.random() * 4);
@@ -106,6 +108,7 @@ export default class World {
             route.a2.prev = 3;
             break;
         }
+        this.routes.push(route);
         areaCnt += 1;
         if (areaCnt < numAreas) {
           stack.push(route.a2);
@@ -118,8 +121,7 @@ export default class World {
         // two paths
         // one path
         let route1, route2;
-        let len = Math.floor(util.random() * 64 + Math.max(area.sx, area.sy));
-        let dir = Math.floor(util.random() * 2);
+        let len = Math.floor(util.random() * 64 + 64);
         if (area.prev === 2 || area.prev === 3) {
           route1 = this.generateRoute(area, len, 'north');
           route2 = this.generateRoute(area, len, 'south');
@@ -387,6 +389,13 @@ export default class World {
       area.init(this.grid);
     });
   }
+
+  fillRoutes() {
+    this.routes.forEach(route => {
+      route.init(this.grid);
+    });
+  }
+
 
   findNearestArea(area, exclude) {
     let {x, y, rx, ry} = area;

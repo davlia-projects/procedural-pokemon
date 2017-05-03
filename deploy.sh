@@ -1,8 +1,9 @@
-PROJ_DIR=~/workspace/procedural-pokemon
+PROJ_DIR=$(pwd)
 BUILD_DIR=$PROJ_DIR/build
 DEPLOY_DIR=$PROJ_DIR/../procedural_pokemon_build
 set -o errexit
 
+printf "Deploying from $PROJ_DIR\n"
 printf "Building...\n"
 git checkout master 1>/dev/null 2>/dev/null
 git pull origin master 1>/dev/null 2>/dev/null

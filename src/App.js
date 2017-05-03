@@ -132,7 +132,7 @@ export default class App {
  **********************/
 
   setupWebsocket() {
-    this.ws = new WebSocket(LOCAL_SERVER_URL);
+    this.ws = new WebSocket(SERVER_URL);
     this.ws.onopen = this.onWSOpen.bind(this);
     this.ws.onmessage = this.receiveEvent.bind(this);
   }

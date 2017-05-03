@@ -47,7 +47,7 @@ export default class App {
         case 32:
           let style = window.debugCanvas.style;
           style.visibility = style.visibility === 'visible' ? 'hidden' : 'visible';
-          console.log(me.pos);
+          console.log(me.pos, this.world.getTile(me.pos.x, me.pos.y));
           break;
         case 37:
           me.move('left', this.world);

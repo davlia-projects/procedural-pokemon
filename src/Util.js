@@ -1,3 +1,5 @@
+import seedrandom from 'seedrandom'
+
 export default class Util {
   constructor() {
     this.randSeed = 0;
@@ -5,19 +7,24 @@ export default class Util {
   }
 
   seed(seed) {
-    this._seed = seed % 2147483647;
-    if (this._seed <= 0) {
-      this._seed += 2147483646;
-    }
     this.randSeed = seed;
+    this.rng = new Math.seedrandom(this.randSeed);
   }
 
   randInt() {
-    return this._seed = this._seed * 16807 % 2147483647 - 1;
+    return this.random() * 2147483647;
+  }
+
+  randRange(a, b) {
+    return this.random() * (b - a) + a;
+  }
+
+  randIntRange(a, b) {
+    return Math.floor(this.randRange(a, b));
   }
 
   random() {
-    return (this.randInt() - 1) / 2147483646;
+    return this.rng();
   }
 
   randomDisk(rx, ry) {
@@ -73,6 +80,18 @@ export default class Util {
     for (let i = 0; i < Math.abs(d); i++) {
       f(start + i * sd);
     }
+  }
+
+  clamp(min, x, max) {
+    return Math.min(Math.max(x, min), max);
+  }
+
+  inBound(min, x, max) {
+    return min <= x && x < max;
+  }
+
+  lerp(x1, y1, x2, y2, x) {
+    return y1 + (x - x1) * (y2 - y1) / (x2 - x1);
   }
 }
 

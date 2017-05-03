@@ -105,7 +105,6 @@ export default class World {
       let a2 = this.findNearestArea(a1, a1.neighbors);
       a1.neighbors.push(a2);
       a2.neighbors.push(a1);
-      let a3 = this.findNearestArea(a1, a1.neighbors);
       let randomOrder = util.random();
       this.definePaths(a1, a2, randomOrder);
     }
@@ -125,7 +124,7 @@ export default class World {
       if (a1x === a1.x + a1.rx || a1x === a1.x - a1.rx) {
         a1.outlets.push({x: a1x, y: a1y});
       }
-      if ((Math.abs(dy) < Math.abs(a1.ry)) && (a1x === a2.x + a2.rx || a1x === a2.x - a2.rx)) {
+      if ((a2.y < Math.abs(a1.ry)) && (a1x === a2.x + a2.rx || a1x === a2.x - a2.rx)) {
         a2.outlets.push({x: a1x, y: a1y});
       }
       for (let j = -pathRadius; j < pathRadius; j++) {
@@ -151,7 +150,7 @@ export default class World {
   }
 
   fixDisconnectedComponents() {
-    
+
   }
 
   defineAreaContent() {

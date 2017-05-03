@@ -30,7 +30,6 @@ export default class Route {
     }
 
     init(grid) {
-        console.log(this);
         this.resolveSprites();
         if (this.orientation === 'v') {
             this.genObstacles(grid);

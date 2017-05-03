@@ -23,11 +23,11 @@ export default class App {
       window.debugCanvas.width = 256;
       window.debugCanvas.height = 256;
       window.debugCanvas.className = 'debug-canvas'
+      window.debugCanvas.style.visibility = 'hidden';
     }
   }
 
   resolveParams() {
-    console.log('resolving params');
     let url = window.location.href;
     if (!url.includes("?")) {
       this.seed = 0;
@@ -51,7 +51,6 @@ export default class App {
 
   setupGame() {
     this.resolveParams();
-    console.log(this.num_areas);
     this.world = new World(this.num_areas);
     this.re = new RenderEngine(
       this.canvas,

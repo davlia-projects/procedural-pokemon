@@ -19,6 +19,7 @@ mkdir -p $DEPLOY_DIR
 cp -R $BUILD_DIR/* $DEPLOY_DIR
 cp -R $PROJ_DIR/assets $DEPLOY_DIR
 cp $PROJ_DIR/index.html $DEPLOY_DIR
+cp -R $PROJ_DIR/css $DEPLOY_DIR
 cd $DEPLOY_DIR
 
 printf "Deploying...\n"

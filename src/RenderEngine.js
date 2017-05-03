@@ -33,6 +33,9 @@ export default class RenderEngine {
         let y = j + pos.y - this.halfHeight;
         let tile = this.world.getTile(x, y);
         this.drawTile(tile, 'terrain', i, j);
+        if (tile.pokemon !== undefined) {
+          this.drawTile(tile, 'pokemon', i, j);
+        }
       }
     }
   }
@@ -73,7 +76,7 @@ export default class RenderEngine {
         spriteSheet = this.terrainSprite;
         break;
       case 'pokemon':
-        spritePos = POKE_TILEMAP[tile.spriteID];
+        spritePos = POKE_TILEMAP[tile.pokemon];
         spriteSheet = this.pokemonSprite;
         break;
     }

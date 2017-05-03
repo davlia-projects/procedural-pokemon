@@ -49,10 +49,10 @@ export const TERRAIN_TILEMAP = {
   'D8': {x: 48, y: 192},
   'OB0': {x: 0, y: 208},
   'OBS': {x: 752, y: 976},
-  'OBD': {x: 544, y: 96},
+  'OBD': {x: 32, y: 1568},
   'EC0': {x: 48, y: 32},
   'ECS': {x: 192, y: 80},
-  'ECD': {x: 32, y: 1568},
+  'ECD': {x: 544, y: 96},
   'LG0': {x: 384, y: 96},
   'LGS': {x: 512, y: 1600},
   'DW0': {x: 416, y: 128},
@@ -76,7 +76,8 @@ export const POKE_TILEMAP = {
   's2': {x: 192, y: 256},
   's3': {x: 192, y: 768},
   'w1': {x: 192, y: 320},
-  'i1': {x: 18 * 64, y: 5 * 64}
+  'i1': {x: 18 * 64, y: 5 * 64},
+  'i2': {x: 704, y: 896}
 };
 
 export const CHARACTER_TILEMAP = {

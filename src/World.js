@@ -216,7 +216,7 @@ export default class World {
         a1x += Math.sign(del);
         for (let j = -pathRadius; j < pathRadius; j++) {
           if (0 <= a1y + j && a1y + j < this.size) {
-            this.grid[a1x][a1y + j] = new Tile(a1.biome, true);
+            this.grid[a1x][a1y + j] = new Tile(route.biome, true);
           }
         }
       }
@@ -227,7 +227,7 @@ export default class World {
         a1y += Math.sign(del);
         for (let j = -pathRadius; j < pathRadius; j++) {
           if (0 <= a1x + j && a1x + j < this.size) {
-            this.grid[a1x + j][a1y] = new Tile(a1.biome, true);
+            this.grid[a1x + j][a1y] = new Tile(route.biome, true);
           }
         }
       }
@@ -459,48 +459,6 @@ export default class World {
 
   getMe() {
     return this.agents[this.me];
-  }
-
-  resetGrid() {
-    // for (let i = 0; i < this.size; i++) {
-    //   for (let j = 0; j < this.size; j++) {
-    //     this.grid[i][j].hasPlayer = false;
-    //   }
-    // }
-  }
-
-  randomPokemon(i, j, region) {
-		let rand = util.random();
-    switch(region) {
-      case 'grass':
-        if (rand < 0.1) {
-          this.grid[i][j].pokemon = 'g1';
-        } else if (rand < 0.15) {
-          this.grid[i][j].pokemon = 'g2';
-        } else if (rand < 0.2) {
-          this.grid[i][j].pokemon = 'g3';
-        }
-        break;
-      case 'water':
-        if (rand < 0.1) {
-          this.grid[i][j].pokemon = 'w1';
-        }
-        break;
-      case 'sand':
-        if (rand < 0.1) {
-          this.grid[i][j].pokemon = 's1';
-        } else if (rand < 0.15) {
-          this.grid[i][j].pokemon = 's2';
-        } else if (rand < 0.2) {
-          this.grid[i][j].pokemon = 's3';
-        }
-        break;
-      case 'snow':
-        if (rand < 0.01) {
-          this.grid[i][j].pokemon = 'i1';
-        }
-        break;
-    }
   }
 
   serialize() {

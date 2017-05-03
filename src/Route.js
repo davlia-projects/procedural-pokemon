@@ -34,18 +34,18 @@ export default class Route {
             this.genWalkable(grid);
             this.repairObstacles(grid);
             this.genEncounterables(grid);
-            this.genDoodads(grid);
         }
         else {
-            console.log("hor")
             this.genObstacles(grid);
             this.repairObstacles(grid);
             this.genHorizWalkable(grid);
             this.repairObstacles(grid);
             this.genEncounterables(grid);
+            this.genDoodads(grid);
         }
         this.assignHeights(grid);
         this.genLedges(grid);
+        this.genPokemon(grid);
     }
 
     resolveSprites() {
@@ -84,8 +84,8 @@ export default class Route {
     }
 
     traverse(f) {
-        for (let i = this.x - this.rx; i < this.x + this.rx; i++) {
-            for (let j = this.y - this.ry; j <= this.y + this.ry; j++) {
+        for (let i = this.x - this.rx + 1; i < this.x + this.rx; i++) {
+            for (let j = this.y - this.ry; j < this.y + this.ry; j++) {
                 f(i, j);
             }
         }
@@ -190,7 +190,6 @@ export default class Route {
         let maxby = this.y + this.ry;
         let minby = this.y - this.ry;
         for (let k = 0; k < 20; k++) {
-            console.log("hi");
             let r = Math.floor(util.random() * 5) + 1;
             let rsq = r * r;
             let x = Math.floor(this.x + util.random() * this.sx - this.rx);
@@ -276,5 +275,49 @@ export default class Route {
                 }
             }
         });
+    }
+
+    genPokemon(grid) {
+        // loop through cells of the route
+        for (let i = this.x - this.rx; i < this.x + this.rx; i++) {
+            for (let j = this.y - this.ry; j < this.y + this.ry; j++) {
+                    if (grid[i][j].spriteID === 'EC0' || grid[i][j].spriteID === 'ECS' || grid[i][j].spriteID === 'ECD' || grid[i][j].biome === 'water') {
+                        let rand = util.random();
+                        if (grid[i][j].spriteID === 'EC0' && this.biome === 'grass') {
+                            if (rand < 0.03) {
+                              grid[i][j].pokemon = 'g1';
+                            } else if (rand < 0.08) {
+                              grid[i][j].pokemon = 'g2';
+                            } else if (rand < 0.15) {
+                              grid[i][j].pokemon = 'g3';
+                            }
+                        }
+                        else if (grid[i][j].spriteID === 'ECD' && this.biome === 'sand') {
+                            if (rand < 0.03) {
+                              grid[i][j].pokemon = 's1';
+                            } else if (rand < 0.08) {
+                              grid[i][j].pokemon = 's2';
+                            } else if (rand < 0.1) {
+                              grid[i][j].pokemon = 's3';
+                            }              
+                        }
+                        else if (grid[i][j].biome === 'water') {
+                            if (rand < 0.1) {
+                              grid[i][j].pokemon = 'w1';
+                            }                            
+                        }
+                        else {
+                            if (rand < 0.01) {
+                                grid[i][j].pokemon = 'i1';
+                            }
+                            else if (rand < 0.08) {
+                                grid[i][j].pokemon = 'i2';
+                            }
+                        }
+
+                    }
+            }
+        }
+
     }
 }

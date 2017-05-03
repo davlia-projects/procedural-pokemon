@@ -34,15 +34,13 @@ export default class World {
     for (let i = 0; i < size; i++) {
       this.grid[i] = new Array(size);
     }
+
     // creating areas
     this.defineNPAreas();
     this.defineAreas();
-    // this.defineAreaBiomes();
     this.defineAreaContent();
-    // this.connectAreaCenters();
-    // this.fixDisconnectedComponents();
-    this.fillAreas();
     this.defineNPContent();
+    this.fillAreas();
     //this.defineCities();
 }
 
@@ -81,7 +79,6 @@ export default class World {
     while (stack.length !== 0) {
       area = stack.shift();
       let num = util.random();
-      console.log(num);
       // let num = 0;
       if (num < 0.5) {
         // one path
@@ -146,21 +143,12 @@ export default class World {
     }
   }
 
-  defineAreaBiomes() {
-    for (let i = 0; i < this.areas.length; i++) {
-      let rand = util.random();
-      let area = this.areas[i];
-      area.biome = this.getRandomBiome(rand);
-    }
-  }
-
   generateRoute(area, len, dir) {
     let {x, y} = area;
     let newX, newY, newArea, route;
     switch(dir) {
       case 'north':
         while (area.y - len < 0) {
-          console.log("in north while");
           len = Math.floor(util.random() * len);
         }
         newX = x;
@@ -173,7 +161,6 @@ export default class World {
         break;
       case 'south':
         while (area.y + len > this.size) {
-          console.log("in south while");
           len = Math.floor(util.random() * len);
         }
         newX = x;
@@ -186,7 +173,6 @@ export default class World {
         break;
       case 'east':
         while (area.x + len > this.size) {
-          console.log("in east while");
           len = Math.floor(util.random() * len);
         }
         newX = x + len;
@@ -199,7 +185,6 @@ export default class World {
         break;
       case 'west':
         while (area.y - len < 0) {
-          console.log("in west while");
           len = Math.floor(util.random() * len);
         }
         newX = x - len;
@@ -246,61 +231,6 @@ export default class World {
     }
   }
 
-  connectAreaCenters() {
-    // connect nodes
-    for (let i = 0; i < this.areas.length; i++) {
-      let a1 = this.areas[i];
-      let a2 = this.findNearestArea(a1, a1.neighbors);
-      a1.neighbors.push(a2);
-      a2.neighbors.push(a1);
-      let randomOrder = util.random();
-      this.definePaths(a1, a2, randomOrder);
-    }
-  }
-
-  definePaths(a1, a2, randomOrder) {
-    let pathRadius = this.size / 64;
-    let dx = a2.x - a1.x;
-    let dy = a2.y - a1.y;
-    let a1x = a1.x;
-    let a1y = a1.y;
-    let a2x = a2.x;
-    let a2y = a2.y;
-    // if (randomOrder < 1) {
-    for (let i = 0; i < Math.abs(dx); i++) {
-      a1x += Math.sign(dx);
-      if (a1x === a1.x + a1.rx || a1x === a1.x - a1.rx) {
-        a1.outlets.push({x: a1x, y: a1y});
-      }
-      if ((a2.y < Math.abs(a1.ry)) && (a1x === a2.x + a2.rx || a1x === a2.x - a2.rx)) {
-        a2.outlets.push({x: a1x, y: a1y});
-      }
-      for (let j = -pathRadius; j < pathRadius; j++) {
-        if (0 <= a1y + j && a1y + j < this.size) {
-          this.grid[a1x][a1y + j] = new Tile(a1.biome, true);
-        }
-      }
-    }
-    for (let i = 0; i < Math.abs(dy); i++) {
-      a1y += Math.sign(dy);
-      if (a1y === a1.y + a1.ry || a1y === a1.y - a1.ry) {
-        a2.outlets.push({x: a1x, y: a1y});
-      }
-      if ((Math.abs(dx) < Math.abs(a1.rx)) && (a1y === a2.y + a2.ry || a1y === a2.y - a2.ry)) {
-        a1.outlets.push({x: a1x, y: a1y});
-      }
-      for (let j = -pathRadius; j < pathRadius; j++) {
-        if (0 <= a1x + j && a1x + j < this.size) {
-          this.grid[a1x + j][a1y] = new Tile(a2.biome, true);
-        }
-      }
-    }
-  }
-
-  fixDisconnectedComponents() {
-
-  }
-
   defineAreaContent() {
     // draw cities
     for (let c = 0; c < this.areas.length; c++) {
@@ -320,13 +250,21 @@ export default class World {
       for (let j = 0; j < this.size; j++) {
         // check if this is NP tile
         let npTile = this.grid[i][j];
-        if (npTile.spriteID === '0' && i + 1 < this.size && i - 1 >= 0) {
+        if (npTile.traversable === false && i + 1 < this.size && i - 1 >= 0) {
           // check if this is a up, down, left, right
           let uTile = this.grid[i][j-1];
           if (uTile !== undefined && (uTile.spriteID === 'grass' || uTile.spriteID === 'sand')) {
             this.grid[i][j] = new Tile('mtn-d', false, 0, -1);
             for (let k = 1; k < 5; k++) {
               this.grid[i][j+k] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+          else if (uTile !== undefined && (uTile.spriteID === 'water')) {
+            // let rand = util.random();
+            this.grid[i][j] = new Tile('wtr-1', false);
+            for (let k = 1; k < 5; k++) {
+              this.grid[i][j+k] = new Tile('dwater', false);
             }
             continue;
           }
@@ -338,11 +276,25 @@ export default class World {
             }
             continue;
           }
+          else if (dTile !== undefined && (dTile.spriteID === 'water')) {
+            this.grid[i][j] = new Tile('wtr-1', false);
+            for (let k = 1; k < 5; k++) {
+              this.grid[i][j-k] = new Tile('dwater', false);
+            }
+            continue;
+          }
           let lTile = this.grid[i-1][j];
           if (lTile !== undefined && (lTile.spriteID === 'grass' || lTile.spriteID === 'sand')) {
             this.grid[i][j] = new Tile('mtn-d', false, -1, 0);
             for (let k = 1; k < 7; k++) {
               this.grid[i+k][j] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+          else if (lTile !== undefined && (lTile.spriteID === 'water')) {
+            this.grid[i][j] = new Tile('wtr-1', false);
+            for (let k = 1; k < 7; k++) {
+              this.grid[i+k][j] = new Tile('dwater', false);
             }
             continue;
           }
@@ -352,6 +304,13 @@ export default class World {
             this.grid[i][j] = new Tile('mtn-d', false, 1, 0);
             for (let k = 1; k < 7; k++) {
               this.grid[i-k][j] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+          else if (rTile !== undefined && (rTile.spriteID === 'water')) {
+            this.grid[i][j] = new Tile('wtr-1', false);
+            for (let k = 1; k < 7; k++) {
+              this.grid[i-k][j] = new Tile('dwater', false);
             }
             continue;
           }

@@ -17,7 +17,7 @@ export default class Area {
 		this.structures = [];
 		this.neighbors = [];
     this.outlets = [];
-    this.biome = undefined;
+    this.biome = this.getRandomBiome();
 
     // TODO: change spriteIDs based on biome
     this.treeSprite = 'T0';
@@ -40,6 +40,22 @@ export default class Area {
     this.genDoodads(grid);
     // this.genPonds(grid); // TODO: improve algorithm
 	}
+
+  getRandomBiome() {
+    let rand = util.random();
+    if (rand < 0.25) {
+      return 'grass';
+    }
+    else if (rand < 0.50) {
+      return 'water';
+    }
+    else if (rand < 0.75) {
+      return 'sand';
+    }
+    else {
+      return 'snow';
+    }
+  }
 
   genRoadx(grid, startx, starty, length, lw, rw) {
     util.iterate(startx, startx + length, i => {

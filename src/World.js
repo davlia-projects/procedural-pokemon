@@ -2,6 +2,7 @@ import Tile from './Tile.js'
 import Agent from './Agent.js'
 import Area from './Area.js'
 import { util } from './Util.js'
+import Route from './Route.js'
 
 export default class World {
   constructor() {
@@ -14,21 +15,6 @@ export default class World {
       return this.grid[x][y];
     } else {
       return null;
-    }
-  }
-
-  getRandomBiome(rand) {
-    if (rand < 0.25) {
-      return 'grass';
-    }
-    else if (rand < 0.50) {
-      return 'water';
-    }
-    else if (rand < 0.75) {
-      return 'sand';
-    }
-    else {
-      return 'snow';
     }
   }
 
@@ -50,12 +36,12 @@ export default class World {
     }
     // creating areas
     this.defineNPAreas();
-    this.defineAreaCenters();
-    this.defineAreaBiomes();
+    this.defineAreas();
+    // this.defineAreaBiomes();
     this.defineAreaContent();
-    this.connectAreaCenters();
-    this.fixDisconnectedComponents();
-    this.fillAreas();
+    // this.connectAreaCenters();
+    // this.fixDisconnectedComponents();
+    // this.fillAreas();
     this.defineNPContent();
     //this.defineCities();
 }
@@ -68,25 +54,52 @@ export default class World {
     }
   }
 
-  defineAreaCenters() {
+  generateArea(x, y) {
+    let padding = 30;
+    let sx = Math.floor(util.random() * this.size / 16 + this.size / 16);
+    let sy = Math.floor(util.random() * this.size / 16 + this.size / 16);
+    while (x + sx/2 > this.size - padding || x - sx/2 < padding) {
+      sx = Math.floor(util.random() * this.size);
+    }
+    while (y + sy/2 > this.size - padding || y - sy/2 < padding) {
+      sy = Math.floor(util.random() * this.size);
+    }
+    let area = new Area(x, y, sx, sy, 3, true, true);
+    this.areas.push(area);
+    return area;
+  }
+
+  defineAreas() {
     // init area
     let numAreas = this.size / 64;
+    let area = this.generateArea(256, 256);
+    // generate random number from 1-3
+    // let num = Math.floor(util.random() * 3);
+    let num = 0;
+    if (num === 0) {
+      // one path
+      let len = Math.floor(util.random() * 64 + Math.max(area.sx, area.sy));
+      // let dir = Math.floor(util.random() * 4);
+      let dir = 0;
+      switch(dir) {
+        case 0: 
+          // draw north
+          let {x, y} = area;
+          let newX = x;
+          let newY = y - len;
+          let newArea = this.generateArea(newX, newY);
+          let route = new Route(area, newArea);
+          this.drawRoute(route, 'y');
 
-    // edit this to change how close to the side an area can be spawn
-    let padding = 30;
-    for (let i = 0; i < numAreas; i++) {
-      let x = Math.floor(util.random() * this.size);
-      let y = Math.floor(util.random() * this.size);
-      let sx = Math.floor(util.random() * this.size / 8 + this.size / 10);
-      let sy = Math.floor(util.random() * this.size / 8 + this.size / 10);
-      while (!(this.goodAvgDist(x, y) && (x + sx/2 < this.size - padding && x - sx/2 > padding))) {
-        x = Math.floor(util.random() * this.size);
+          break;
       }
-      while (!(this.goodAvgDist(x, y) && (y + sy/2 < this.size - padding && y - sy/2 > padding))) {
-        y = Math.floor(util.random() * this.size);
-      }
-      let area = new Area(x, y, sx, sy, 3, true, true);
-      this.areas.push(area);
+      // draw path from a1 
+    }
+    else if (num === 1) {
+
+    }
+    else {
+
     }
   }
 
@@ -96,6 +109,31 @@ export default class World {
       let area = this.areas[i];
       area.biome = this.getRandomBiome(rand);
     }
+  }
+
+  // connect a1 to a2
+  drawRoute(route, dir) {
+    let {a1, a2} = route;
+    let pathRadius = 8;
+    let del;
+    let a1x = a1.x;
+    let a1y = a1.y;
+    if (dir === 'x') {
+      del = a2.x - a1.x;
+    }
+    else {
+      del = a2.y - a1.y;
+      for (let i = 0; i < Math.abs(del); i++) {
+        a1y += Math.sign(del);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= a1x + j && a1x + j < this.size) {
+            console.log(a1.biome);
+            this.grid[a1x + j][a1y] = new Tile(a1.biome, true);
+          }
+        }
+      }
+    }
+
   }
 
   connectAreaCenters() {

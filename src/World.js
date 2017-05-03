@@ -73,8 +73,9 @@ export default class World {
     let areaCnt = 1;
     let stack = [];
     let area = this.generateArea(256, 256);
+
     let route;
-    let prev = undefined;
+    let prev;
     stack.push(area);
     while (stack.length !== 0) {
       area = stack.shift();
@@ -201,7 +202,6 @@ export default class World {
 
   // connect a1 to a2
   drawRoute(route, dir) {
-    console.log("drawing");
     let {a1, a2} = route;
     let pathRadius = 8;
     let del;

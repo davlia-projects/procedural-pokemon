@@ -38,6 +38,10 @@ export const TERRAIN_TILEMAP = {
   'D5': {x: 80, y: 208},
   'D6': {x: 96, y: 208},
   'D7': {x: 16, y: 192},
+  'D8': {x: 48, y: 192},
+  'OB0': {x: 0, y: 208},
+  'EC0': {x: 48, y: 32},
+  'LG0': {x: 384, y: 96},
 
   // more to come...
 };

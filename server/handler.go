@@ -4,7 +4,7 @@ func (C *Controller) handleInit(msg InboundMessage) {
 	// Initialize newly connected user
 	p := Agent{
 		Type:     "player",
-		Pos:      Point{X: 15, Y: 15}, // Default spawn location is 10, 10 for now. We can change this later -- David
+		Pos:      Point{X: 256, Y: 256}, // Default spawn location is 10, 10 for now. We can change this later -- David
 		ID:       msg.Sender,
 		SpriteID: "F",
 		Dir:      "down",

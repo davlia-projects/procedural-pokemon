@@ -2,12 +2,11 @@ import World from './World.js'
 import RenderEngine from './RenderEngine.js'
 import Sprite from './Sprite.js'
 
+window.DEBUG_MODE = 1;
 const ASSETS = './assets';
 const SERVER_URL = 'wss://davidliao.me:8000/play';
 const LOCAL_SERVER_URL = 'ws://localhost:8000/play';
 const RESOLUTION_SCALE = 3;
-const DEFAULT_WORLD_SIZE = 100;
-const DEFAULT_PLAYER_POS = {x: 10, y: 10};
 export default class App {
   constructor () {
     this.canvas = document.createElement('canvas'); // Aspect ratio of 3:2
@@ -17,6 +16,29 @@ export default class App {
     this.pokemonSpriteSrc = `${ASSETS}/pokemon.png`;
     this.playerSpriteSrc = `${ASSETS}/player.png`;
     this.clientID = -1; // default null value for client ID
+
+    if (window.DEBUG_MODE === 1) {
+      window.debugCanvas = document.createElement('canvas');
+      window.debugCanvas.width = 256;
+      window.debugCanvas.height = 256;
+    }
+  }
+
+  resolveParams() {
+    console.log('resolving params');
+    let url = window.location.href;
+    if (!url.includes("?")) {
+      this.seed = 0;
+      this.num_areas = 6;
+    }
+    else {
+      let params = url.split('?');
+      let tokens = params[1].split('&');
+      let seed = tokens[0].split('=');
+      let num_areas = tokens[1].split('=');
+      this.seed = seed[1];
+      this.num_areas = num_areas[1];
+    }
   }
 
   setup() {
@@ -26,7 +48,9 @@ export default class App {
   }
 
   setupGame() {
-    this.world = new World(DEFAULT_WORLD_SIZE);
+    this.resolveParams();
+    console.log(this.num_areas);
+    this.world = new World(this.num_areas);
     this.re = new RenderEngine(
       this.canvas,
       this.terrainSprite,
@@ -40,6 +64,9 @@ export default class App {
       let me = this.world.getMe();
       switch (event.keyCode) {
         case 32:
+          let style = window.debugCanvas.style;
+          style.visibility = style.visibility === 'visible' ? 'hidden' : 'visible';
+          console.log(me.pos, this.world.getTile(me.pos.x, me.pos.y));
           break;
         case 37:
           me.move('left', this.world);
@@ -66,6 +93,9 @@ export default class App {
 
   onLoad() {
     document.body.appendChild(this.canvas);
+    if (window.DEBUG_MODE === 1) {
+      document.body.appendChild(window.debugCanvas);
+    }
     // TODO: turn into Promise.All instead of callback chain
     this.terrainSprite = new Sprite(this.terrainSpriteSrc, 16, 16, () => {
       this.pokemonSprite = new Sprite(this.pokemonSpriteSrc, 64, 64, () => {
@@ -74,9 +104,6 @@ export default class App {
         });
       });
     });
-  }
-
-  onUpdate() {
   }
 
   onResize() {

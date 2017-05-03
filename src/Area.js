@@ -4,14 +4,13 @@ import { util } from './Util.js'
 
 
 export default class Area {
-	constructor(x, y, sx, sy, biome, numHouses, pokemart, pokecenter) {
+	constructor(x, y, sx, sy, numHouses, pokemart, pokecenter) {
 		this.x = x;
 		this.y = y;
 		this.sx = sx; // TODO: figure out if rx is radius or diameter
 		this.sy = sy;
 		this.rx = Math.floor(sx / 2);
 		this.ry = Math.floor(sy / 2);
-		this.biome = biome;
 		this.numHouses = numHouses;
 		this.pokemart = pokemart;
 		this.pokecenter = pokecenter;
@@ -26,6 +25,9 @@ export default class Area {
     this.bpcSprite = 'BPC';
     this.pmSprite = 'PM';
     this.pondSprite = 'W0';
+		this.nsOutlet = undefined;
+		this.ewOutlet = undefined;
+		this.biome = undefined;
 	}
 
 	init(grid) {
@@ -143,7 +145,7 @@ export default class Area {
 	}
 
 	genPokemart(grid) {
-		if (this.pokemart) {
+		if (!this.pokemart) {
 			return;
 		}
 		let { locx, locy } = this.validStructureLocation(grid);

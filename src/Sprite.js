@@ -25,6 +25,7 @@ export const TERRAIN_TILEMAP = {
   'R01': {x: 384, y: 0},
   'T0': {x: 16, y: 144},
   'W0': {x: 464, y: 32},
+  'mtn-d': {x: 432, y: 1328},
   // more to come...
 };
 

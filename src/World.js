@@ -13,7 +13,7 @@ export default class World {
     if (0 <= x && x < this.size && 0 <= y && y < this.size) {
       return this.grid[x][y];
     } else {
-      return new Tile('0');
+      return null;
     }
   }
 
@@ -28,7 +28,7 @@ export default class World {
       return 'sand';
     }
     else {
-      return 'grass';
+      return 'snow';
     }
   }
 
@@ -43,7 +43,7 @@ export default class World {
     util.seed(seed);
     this.size = size;
 
-    // creating grid
+    // creating grid[]
     this.grid = new Array(size);
     for (let i = 0; i < size; i++) {
       this.grid[i] = new Array(size);
@@ -55,6 +55,8 @@ export default class World {
     this.connectAreaCenters();
     this.defineAreaContent();
     this.fillAreas();
+    this.defineNPContent();
+    //this.defineCities();
 }
 
   defineNPAreas() {
@@ -70,19 +72,19 @@ export default class World {
     let numAreas = this.size / 64;
 
     // edit this to change how close to the side an area can be spawn
-    let padding = 50;
+    let padding = 30;
     for (let i = 0; i < numAreas; i++) {
       let x = Math.floor(util.random() * this.size);
       let y = Math.floor(util.random() * this.size);
       let sx = Math.floor(util.random() * this.size / 8 + this.size / 10);
       let sy = Math.floor(util.random() * this.size / 8 + this.size / 10);
-      while (x + sx/2 > this.size - padding || x - sx/2 < padding) {
+      while (!(this.goodAvgDist(x, y) && (x + sx/2 < this.size - padding && x - sx/2 > padding))) {
         x = Math.floor(util.random() * this.size);
       }
-      while (y + sy/2 > this.size - padding || y - sy/2 < padding) {
+      while (!(this.goodAvgDist(x, y) && (y + sy/2 < this.size - padding && y - sy/2 > padding))) {
         y = Math.floor(util.random() * this.size);
       }
-      let area = new Area(x, y, sx, sy, undefined, 10, true, true);
+      let area = new Area(x, y, sx, sy, 3, true, true);
       this.areas.push(area);
     }
   }
@@ -97,48 +99,82 @@ export default class World {
 
   connectAreaCenters() {
     // connect nodes
-    for (let i = 0; i < this.areas.length-1; i++) {
-      let c = this.areas[i];
-      let nc = this.areas[i+1];
-      let pathRadius = this.size / 64;
-      let dx = nc.x - c.x;
-      let dy = nc.y - c.y;
-      let cx = c.x;
-      let cy = c.y;
+    for (let i = 0; i < this.areas.length; i++) {
+      let a1 = this.areas[i];
+      let a2 = this.findNearestArea(a1, a1.neighbors);
+      a1.neighbors.push(a2);
+      a2.neighbors.push(a1);
       let randomOrder = util.random();
-      if (randomOrder > 0.80) {
-        for (let i = 0; i < Math.abs(dx); i++) {
-          cx += Math.sign(dx);
-          for (let j = -pathRadius; j < pathRadius; j++) {
-            if (0 <= cy + j && cy + j < this.size) {
-              this.grid[cx][cy + j] = new Tile(c.biome, true);
-            }
-          }
-        }
-        for (let i = 0; i < Math.abs(dy); i++) {
-          cy += Math.sign(dy);
-          for (let j = -pathRadius; j < pathRadius; j++) {
-            if (0 <= cx + j && cx + j < this.size) {
-              this.grid[cx + j][cy] = new Tile(nc.biome, true);
-            }
+      this.definePaths(a1, a2, randomOrder);
+    }
+  }
+
+  definePaths(a1, a2, randomOrder) {
+    let pathRadius = this.size / 64;
+    let dx = a2.x - a1.x;
+    let dy = a2.y - a1.y;
+    let a1x = a1.x;
+    let a1y = a1.y;
+    let a2x = a2.x;
+    let a2y = a2.y;
+    if (randomOrder < 0.5) {
+      // east/west for a1, north/south for a2
+      if (Math.sign(dx) === -1) {
+        a1.ewOutlet = {x: a1x - a1.rx/2.0, y: a1y};
+      }
+      else {
+        a1.ewOutlet = {x: a1x + a1.rx/2.0, y: a1y};
+      }
+      if (Math.sign(dy) === -1) {
+        a2.nsOutlet = {x: a2x, y: a2y + a2.ry/2.0};
+      }
+      else {
+        a2.nsOutlet = {x: a2x, y: a2y - a2.ry/2.0};
+      }
+      for (let i = 0; i < Math.abs(dx); i++) {
+        a1x += Math.sign(dx);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= a1y + j && a1y + j < this.size) {
+            this.grid[a1x][a1y + j] = new Tile(a1.biome, true);
           }
         }
       }
-      else {
-        for (let i = 0; i < Math.abs(dy); i++) {
-          cy += Math.sign(dy);
-          for (let j = -pathRadius; j < pathRadius; j++) {
-            if (0 <= cx + j && cx + j < this.size) {
-              this.grid[cx + j][cy] = new Tile(c.biome, true);
-            }
+      for (let i = 0; i < Math.abs(dy); i++) {
+        a1y += Math.sign(dy);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= a1x + j && a1x + j < this.size) {
+            this.grid[a1x + j][a1y] = new Tile(a2.biome, true);
           }
         }
-        for (let i = 0; i < Math.abs(dx); i++) {
-          cx += Math.sign(dx);
-          for (let j = -pathRadius; j < pathRadius; j++) {
-            if (0 <= cy + j && cy + j < this.size) {
-              this.grid[cx][cy + j] = new Tile(nc.biome, true);
-            }
+      }
+    }
+    else {
+      // a1 has nsOutlet, a2 has ewOutlet
+      if (Math.sign(dx) === -1) {
+        a2.ewOutlet = {x: a2x - a2.rx/2.0, y: a2y};
+      }
+      else {
+        a2.ewOutlet = {x: a2x + a2.rx/2.0, y: a2y};
+      }
+      if (Math.sign(dy) === -1) {
+        a1.nsOutlet = {x: a1x, y: a1y + a1.ry/2.0};
+      }
+      else {
+        a1.nsOutlet = {x: a1x, y: a1y - a1.ry/2.0};
+      }
+      for (let i = 0; i < Math.abs(dy); i++) {
+        a1y += Math.sign(dy);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= a1x + j && a1x + j < this.size) {
+            this.grid[a1x + j][a1y] = new Tile(a1.biome, true);
+          }
+        }
+      }
+      for (let i = 0; i < Math.abs(dx); i++) {
+        a1x += Math.sign(dx);
+        for (let j = -pathRadius; j < pathRadius; j++) {
+          if (0 <= a1y + j && a1y + j < this.size) {
+            this.grid[a1x][a1y + j] = new Tile(a2.biome, true);
           }
         }
       }
@@ -159,13 +195,159 @@ export default class World {
     }
   }
 
+  defineNPContent() {
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        // check if this is NP tile
+        let npTile = this.grid[i][j];
+        if (npTile.spriteID === '0' && i + 1 < this.size && i - 1 >= 0) {
+          // check if this is a up, down, left, right
+          let uTile = this.grid[i][j-1];
+          if (uTile !== undefined && (uTile.spriteID === 'grass' || uTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 0, -1);
+            for (let k = 1; k < 5; k++) {
+              this.grid[i][j+k] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+          let dTile = this.grid[i][j+1];
+          if (dTile !== undefined && (dTile.spriteID === 'grass' || dTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 0, 1);
+            for (let k = 1; k < 5; k++) {
+              this.grid[i][j-k] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+          let lTile = this.grid[i-1][j];
+          if (lTile !== undefined && (lTile.spriteID === 'grass' || lTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, -1, 0);
+            for (let k = 1; k < 7; k++) {
+              this.grid[i+k][j] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+
+          let rTile = this.grid[i+1][j];
+          if (rTile !== undefined && (rTile.spriteID === 'grass' || rTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 1, 0);
+            for (let k = 1; k < 7; k++) {
+              this.grid[i-k][j] = new Tile('mtn-d', false, 0, 0);
+            }
+            continue;
+          }
+
+          // check for corners
+          let urTile = this.grid[i+1][j+1];
+          if (urTile !== undefined && (urTile.spriteID === 'grass' || urTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 2, -1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (i - k >= 0 && j - l >= 0 && this.grid[i-k][j-l].spriteID === '0') {
+                  this.grid[i-k][j-l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+
+          let ulTile = this.grid[i-1][j+1];
+          if (ulTile !== undefined && (ulTile.spriteID === 'grass' || ulTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 4, -1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (k === 0 && l === 0) {
+                  continue;
+                }
+                if (i + k < this.size && j - l >= 0 && this.grid[i+k][j-l].spriteID === '0') {
+                  this.grid[i+k][j-l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+
+          let brTile = this.grid[i+1][j-1];
+          if (brTile !== undefined && (brTile.spriteID === 'grass' || brTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 2, 1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (i - k >= 0 && j + l < this.size && this.grid[i-k][j+l].spriteID === '0') {
+                  this.grid[i-k][j+l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+
+          let blTile = this.grid[i-1][j-1];
+          if (blTile !== undefined && (blTile.spriteID === 'grass' || blTile.spriteID === 'sand')) {
+            this.grid[i][j] = new Tile('mtn-d', false, 4, 1);
+            // double for loop to fill in the 'rectangle'
+            for (let k = 0; k < 7; k++) {
+              for (let l = 0; l < 5; l++) {
+                if (k === 0 && l === 0) {
+                  continue;
+                }
+                if (i + k < this.size && j + l < this.size && this.grid[i+k][j+l].spriteID === '0') {
+                  this.grid[i+k][j+l] = new Tile('mtn-d', false, 0, 0);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  fillNPContent(tile, i, j) {
+
+  }
+
   fillAreas() {
     this.areas.forEach(area => {
       area.init(this.grid);
     });
   }
 
+  findNearestArea(area, exclude) {
+    let {x, y, rx, ry} = area;
+    let min_dist = undefined;
+    let closest = undefined;
+    for (let i = 0; i < this.areas.length; i++) {
+      let a = this.areas[i];
+      if (a == area || exclude.indexOf(a) !== -1) {
+        continue;
+      }
+      let dist = Math.sqrt(Math.pow((a.x - x), 2) + Math.pow((a.y - y), 2));
+      if (dist < min_dist || min_dist === undefined) {
+        min_dist = dist;
+        closest = a;
+      }
+    }
+    return closest;
+  }
 
+  // avgDist defined by user
+  goodAvgDist(x, y) {
+    if (this.areas.length === 0) {
+      return true;
+    }
+    let a, min_dist, closest;
+    for (let i = 0; i < this.areas.length; i++) {
+      a = this.areas[i];
+      let dist = Math.sqrt(Math.pow((a.x - x), 2) + Math.pow((a.y - y), 2));
+      if (dist < min_dist || min_dist === undefined) {
+        min_dist = dist;
+        closest = a;
+      }
+    }
+    // calculate distance to closest area
+    let dist = Math.sqrt(Math.pow((closest.x - x), 2) + Math.pow((closest.y - y), 2));
+    if (dist >= 30) {
+      return true;
+    }
+    return false;
+  }
 
   // TODO: should we differentiate between agent types? :thinking:
   addAgents(agents) {

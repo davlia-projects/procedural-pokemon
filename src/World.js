@@ -5,10 +5,11 @@ import { util } from './Util.js'
 import Route from './Route.js'
 
 export default class World {
-  constructor() {
+  constructor(num_areas) {
     this.agents = {};
     this.areas = [];
     this.routes = [];
+    this.num_areas = num_areas;
   }
 
   getTile(x, y) {
@@ -71,7 +72,7 @@ export default class World {
 
   defineAreas() {
     // init area
-    let numAreas = 6;
+    let numAreas = this.num_areas;
     let areaCnt = 1;
     let stack = [];
     let area = this.generateArea(256, 256);

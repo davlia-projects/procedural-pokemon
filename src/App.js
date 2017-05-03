@@ -24,6 +24,23 @@ export default class App {
     }
   }
 
+  resolveParams() {
+    console.log('resolving params');
+    let url = window.location.href;
+    if (!url.includes("?")) {
+      this.seed = 0;
+      this.num_areas = 6;
+    }
+    else {
+      let params = url.split('?');
+      let tokens = params[1].split('&');
+      let seed = tokens[0].split('=');
+      let num_areas = tokens[1].split('=');
+      this.seed = seed[1];
+      this.num_areas = num_areas[1];
+    }
+  }
+
   setup() {
     this.setupWebsocket();
     this.setupGame();
@@ -31,7 +48,9 @@ export default class App {
   }
 
   setupGame() {
-    this.world = new World();
+    this.resolveParams();
+    console.log(this.num_areas);
+    this.world = new World(this.num_areas);
     this.re = new RenderEngine(
       this.canvas,
       this.terrainSprite,
